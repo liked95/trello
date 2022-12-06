@@ -30,6 +30,7 @@ body,
   height: 100%;
   width: 100%;
   position: relative;
+  overflow: scroll;
 }
 
 .list-wrapper {
@@ -74,7 +75,10 @@ body,
 .list-card-detail {
   word-wrap: break-word;
   color: #172b4d;
-  font-size: 14px;
+  /* font-size: 14px; */
+  width: 100%;
+  border: none;
+  resize: vertical;
 }
 
 .add-card-section {
@@ -87,7 +91,7 @@ body,
 
 .add-btn,
 .del-btn {
-  color: #172b4d;
+  color: #5e6c84;
   font-size: 14px;
   background-color: transparent;
   border: none;
@@ -103,4 +107,10 @@ body,
 
 .add-btn:hover {
   background-color: #dadce2
+}
+
+.add-list-content {
+  background-color: #ffffff3d;
+  /* height: 40px; */
+
 }

@@ -3,9 +3,7 @@ import React from 'react'
 function ListCard() {
     return (
         <div className='list-card-wrapper'>
-            <div className="list-card-detail">
-                Test list card detail
-            </div>
+            <textarea className="list-card-detail" defaultValue={"Test list card detail"} />
         </div>
     )
 }

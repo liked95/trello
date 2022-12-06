@@ -18,8 +18,8 @@ function List() {
                 </div>
 
                 <div className="add-card-section">
-                    <button class="add-btn">+ Add a card</button>
-                    <button class="del-btn">Delete</button>
+                    <button className="add-btn">+ Add a card</button>
+                    <button className="del-btn">Delete</button>
                     
                 </div>
             </div>
