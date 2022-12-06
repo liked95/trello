@@ -1,6 +1,7 @@
 import React from 'react'
 import ListCard from '../ListCard'
 
+
 function List() {
     return (
         <div className='list-wrapper'>
@@ -14,6 +15,12 @@ function List() {
                     <ListCard/>
                     <ListCard/>
                     <ListCard/>
+                </div>
+
+                <div className="add-card-section">
+                    <button class="add-btn">+ Add a card</button>
+                    <button class="del-btn">Delete</button>
+                    
                 </div>
             </div>
         </div>

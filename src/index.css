@@ -6,7 +6,9 @@
   height: 100%;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   position: relative;
 }
@@ -38,17 +40,64 @@ html, body, #root {
   background-color: #ebecf0;
   height: auto;
   border-radius: 3px;
-  /* padding: 4px; */
+  padding: 0 4px;
 }
 
 .list-heading {
-  padding: 10px 8px;
+  padding: 5px 4px;
   min-height: 20px;
   position: relative;
+  cursor: pointer;
 }
 
 .list-header-name {
   font-weight: 600;
   font-size: 14px;
   line-height: 24px;
+  padding-left: 8px;
+}
+
+.list-cards {
+  padding: 0 4px;
+}
+
+.list-card-wrapper {
+  background-color: #fff;
+  padding: 6px 8px 6px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+.list-card-detail {
+  word-wrap: break-word;
+  color: #172b4d;
+  font-size: 14px;
+}
+
+.add-card-section {
+  padding: 4px;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.add-btn,
+.del-btn {
+  color: #172b4d;
+  font-size: 14px;
+  background-color: transparent;
+  border: none;
+  padding: 8px 4px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.add-btn {
+  flex: 1;
+  text-align: left;
+}
+
+.add-btn:hover {
+  background-color: #dadce2
 }

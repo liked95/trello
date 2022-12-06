@@ -1,9 +1,13 @@
 import React from 'react'
 
 function ListCard() {
-  return (
-    <div>ListCard</div>
-  )
+    return (
+        <div className='list-card-wrapper'>
+            <div className="list-card-detail">
+                Test list card detail
+            </div>
+        </div>
+    )
 }
 
 export default ListCard
