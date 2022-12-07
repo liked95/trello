@@ -8,9 +8,10 @@ import { createListId } from '../../utils';
 
 
 function List({ list }) {
+    console.log('rerender')
     const { title, cards, id } = list
     const { dispatchList } = useContext(Context)
-
+   
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
 
@@ -26,7 +27,7 @@ function List({ list }) {
 
     const handleShowAddCardControl = () => {
         setIsCardShown(true)
-        
+
         if (cardInputRef.current) {
             cardInputRef.current.focus()
         }
@@ -59,7 +60,7 @@ function List({ list }) {
     }
 
     return (
-        <div className='list-wrapper'>
+        
             <div className="list-content">
                 <div className="list-heading">
                     <h2 className="list-header-name">
@@ -93,7 +94,7 @@ function List({ list }) {
                     </div>
                 </div>}
             </div>
-        </div>
+        
 
     )
 }
