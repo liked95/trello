@@ -12,8 +12,6 @@ function App() {
       <div className='dashboard'>
         <List />
         <List />
-       
-        <List />
         <AddList />
       </div>
     </div>
