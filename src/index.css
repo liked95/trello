@@ -72,7 +72,7 @@ body,
   padding: 6px 8px 6px;
   border-radius: 3px;
   margin-bottom: 8px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .list-card-detail {
@@ -83,6 +83,10 @@ body,
   border: none;
   resize: vertical;
   font-family: -apple-system, system-ui, BlinkMacSystemFont;
+}
+
+.list-card-detail:focus {
+  outline: none;
 }
 
 .add-card-section {
@@ -116,14 +120,14 @@ body,
 .add-list-content {
   background-color: #ffffff3d;
   border-radius: 3px;
-  max-height: 40px;
-  transition: all 150ms;
+  max-height: 50px;
+  transition: all 200ms;
 }
 
 .add-list-content.open {
   /* height: auto; */
   background-color: #ebecf0;
-  max-height: 80px;
+  max-height: 100px;
 }
 
 .add-list-content .add-list-control {
@@ -155,7 +159,7 @@ body,
 }
 
 .add-list-title:focus {
-  border: solid 2px #0079bf;
+  outline: none;
 }
 
 .add-list-btn {
@@ -181,4 +185,34 @@ body,
 
 .add-list-btn:hover {
   background-color: #026aa7;
+}
+
+/* add card control */
+.add-card-control {
+  padding: 4px;
+}
+
+.add-card-control .first-row {
+  background-color: #fff;
+  padding: 6px;
+  border-radius: 3px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+.add-card-control .second-row {
+  display: flex;
+  margin-top: 8px;
+}
+
+.add-card-title {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont;
+  width: 100%;
+  min-height: 40px;
+  resize: vertical;
+  border-radius: 3px;
+  border: none;
+}
+
+.add-card-title:focus {
+  outline: none;
 }
