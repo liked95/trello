@@ -3,16 +3,25 @@ import './App.css';
 import styled from 'styled-components';
 import List from './components/List';
 import AddList from './components/AddList';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Context } from './context';
 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { reorder } from './utils';
 
 
 
 function App() {
-  const { lists } = useContext(Context)
-  // console.log(lists)
+  const  {initialData}  = useContext(Context)
+  
+  console.log(initialData)
+  const [boardLists, setBoardLists] = useState([])
+
+  useEffect(() => {
+    // initialData.lists.sort((a, b) => initialData.listOrder.indexOf(a.id) - initialData.listOrder.indexOf(b.id))
+    reorder(initialData.lists, initialData.listOrder, 'id')
+    setBoardLists(initialData.lists)
+  }, [])
 
 
   const handleDragEnd = () => {
@@ -26,9 +35,9 @@ function App() {
           {(provided) => (
             <div className='dashboard' {...provided.droppableProps} ref={provided.innerRef}>
 
-              {lists.map((list) => {
+              {boardLists.map((list, index) => {
                 return (
-                  <Draggable key={list.id} draggableId={list.id.toString()} index={list.id}>
+                  <Draggable key={`${list.id}`} draggableId={`${list.id}`} index={index}>
                     {(provided) => (
                       <div className='list-wrapper' ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                         <List list={list} />

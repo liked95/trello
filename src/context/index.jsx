@@ -6,9 +6,9 @@ export const Context = createContext()
 
 function AppProvider({ children }) {
 
-    const [lists, dispatchList] = useReducer(listReducer, initialListState)
+    const [initialData, dispatchList] = useReducer(listReducer, initialListState)
     return (
-        <Context.Provider value={{ lists, dispatchList }}>
+        <Context.Provider value={{ initialData, dispatchList }}>
             {children}
         </Context.Provider>
     )

@@ -1,24 +1,54 @@
 import { ADD_CARD, ADD_LIST, DELETE_LIST } from "./constants"
 
-export const initialListState = [
-    {
-        id: 1,
-        title: "My title 1",
-        cards: [
-            { id: 1, content: "Lorem 1" },
-            { id: 2, content: "Lorem 2" },
-            { id: 3, content: "Lorem 3" },
-]
-    },
-    {
-        id: 2,
-        title: "My title 2",
-        cards: [
-            { id: 1, content: "Anonymouss 1" },
-            { id: 2, content: "Anonymouss 2" },
-        ]
-    }
-]
+export const initialListState = {
+    listOrder: ['list-2', 'list-1'],
+    lists: [
+        {
+            id: 'list-1',
+            title: "My title 1",
+            cardOrder: ['card-1', 'card-2', 'card-3'],
+            cards: [
+                {
+                    id: 'card-1',
+                    listId: 'list-1',
+                    content: "Lorem 1",
+                },
+                {
+                    id: 'card-2',
+                    listId: 'list-1',
+                    content: "Lorem 2",
+                },
+                {
+                    id: 'card-3',
+                    listId: 'list-1',
+                    content: "Lorem 3",
+                },
+            ]
+        },
+        {
+            id: 'list-2',
+            title: "My title 2",
+            cardOrder: ['card-5', 'card-4', 'card-6'],
+            cards: [
+                {
+                    id: 'card-4',
+                    listId: 'list-2',
+                    content: "Anonymous 4",
+                },
+                {
+                    id: 'card-5',
+                    listId: 'list-2',
+                    content: "Anonymous 5",
+                },
+                {
+                    id: 'card-6',
+                    listId: 'list-2',
+                    content: "Anonymous 6",
+                },
+            ]
+        }
+    ]
+}
 
 const listReducer = (state, action) => {
     switch (action.type) {
