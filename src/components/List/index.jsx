@@ -8,8 +8,9 @@ import { createListId, reorder } from '../../utils';
 
 
 function List({ list }) {
-    console.log('rerender')
+    // console.log('rerender')
     const { title, cards, id, cardOrder } = list
+    console.log(list)
 
     const { dispatchList } = useContext(Context)
 
@@ -20,7 +21,7 @@ function List({ list }) {
     useEffect(() => {
         reorder(cards, cardOrder, 'id')
         setBoardCards(cards)
-    }, [])
+    }, [list])
 
 
     const cardInputRef = useRef()
@@ -42,12 +43,12 @@ function List({ list }) {
     }
 
 
-    const handleAddCard = (id) => {
+    const handleAddCard = (listId) => {
         if (!cardValue.trim()) return
 
         const newCard = {
-            listId: id,
-            id: createListId(),
+            listId: listId,
+            id: 'card-' + createListId(),
             content: cardValue.trim()
         }
 

@@ -4,6 +4,6 @@ export function createListId() {
 
 
 export function reorder(initialArr, order, key) {
-    let newArr = initialArr.sort((a, b) => order.indexOf(a[key] - order.indexOf(b[key])))
+    let newArr = initialArr.sort((a, b) => order.indexOf(a[key]) - order.indexOf(b[key]))
     return newArr
 }

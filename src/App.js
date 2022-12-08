@@ -21,7 +21,7 @@ function App() {
     // initialData.lists.sort((a, b) => initialData.listOrder.indexOf(a.id) - initialData.listOrder.indexOf(b.id))
     reorder(initialData.lists, initialData.listOrder, 'id')
     setBoardLists(initialData.lists)
-  }, [])
+  }, [initialData])
 
 
   const handleDragEnd = () => {

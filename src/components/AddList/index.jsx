@@ -28,9 +28,10 @@ function AddList() {
         if (!title.trim()) return
 
         const newList = {
-            id: createListId(),
+            id: 'list-' + createListId(),
             title: title.trim(),
             cards: [],
+            cardOrder: [],
         }
 
         dispatchList(addList(newList))
