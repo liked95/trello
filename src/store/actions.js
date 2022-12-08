@@ -1,4 +1,4 @@
-import { ADD_LIST } from "./constants"
+import { ADD_LIST, UPDATE_LIST_ORDER } from "./constants"
 import { DELETE_LIST } from "./constants"
 import { ADD_CARD } from "./constants"
 
@@ -24,5 +24,13 @@ export const addCard = (card) => {
     return {
         type: ADD_CARD,
         payload: card
+    }
+}
+
+
+export const updateListOrder = (listOrder) => {
+    return {
+        type: UPDATE_LIST_ORDER,
+        payload: listOrder
     }
 }

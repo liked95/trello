@@ -18,17 +18,24 @@ function App() {
   const [boardLists, setBoardLists] = useState([])
 
   useEffect(() => {
-    let lists = reorder(initialData.lists, initialData.listOrder, 'id')
-    // console.log(initialData.lists)
-    setBoardLists(lists)
-  }, [initialData])
+    // let lists = reorder(initialData.lists, initialData.listOrder, 'id')
+    console.log("rrerenderrr")
+    setBoardLists(reorder(initialData.lists, initialData.listOrder, 'id'))
+  }, [initialData.listOrder, initialData.lists])
+
+  // const handleOnChangeListOrder = (newListOrder) => {
+  //   // let lists = reorder(initialData.lists, newListOrder, 'id')
+  //   setBoardLists(newListOrder)
+  //   // console.log(lists);
+  //   // console.log(newListOrder);
+  // }
 
 
   return (
     <div className="App">
       <div className='dashboard'  >
         <div className='dashboard-columns'>
-          {boardLists.map((list, index) => <List list={list} key={index} />)}
+          {boardLists.map((list, index) => <List list={list} key={index}  />)}
         </div>
         <AddList />
       </div>

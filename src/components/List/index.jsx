@@ -1,6 +1,6 @@
-import React, { useContext, useRef, useState, useEffect } from 'react'
+import React, { useContext, useRef, useState, useEffect, Component } from 'react'
 import { Context } from '../../context'
-import { addCard, deleteList } from '../../store/actions'
+import { addCard, deleteList, updateListOrder } from '../../store/actions'
 import ListCard from '../ListCard'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
@@ -93,6 +93,8 @@ function List({ list }) {
         e.target.style.rotate = "3deg"
         e.target.style.zIndex = 100
 
+
+
     }
 
 
@@ -102,23 +104,59 @@ function List({ list }) {
         e.target.style.left = 0
         e.target.style.top = 0
         e.target.style.zIndex = 0
+
+
+        //disable drag attribute when mouse release
+        let allLists = Array.from(document.querySelectorAll(".list-content"))
+        allLists.forEach(list => list.setAttribute('draggable', false))
     }
 
     const handleOnDrop = (e) => {
-        // e.preventDefault()
+        e.preventDefault()
         // e.target.closest(".list-content").style.display = 'none';
         // console.log(initialData.listOrder)
-        console.log("Source: ", e.dataTransfer.getData("text"))
-        console.log("Target: ", e.target.closest(".list-content").id)
 
         // handle sorting list ID logic
+        const sourceListId = e.dataTransfer.getData("text")
+        const targetListId = e.target.closest(".list-content").id
+        console.log("Source: ", sourceListId)
+        console.log("Target: ", targetListId)
+
+        if (sourceListId && targetListId) {
+            console.log(true)
+            const listOrder = initialData.listOrder
+            const sourceIdx = listOrder.indexOf(sourceListId)
+            const targetIdx = listOrder.indexOf(targetListId)
+            if (sourceIdx < targetIdx) {
+                // if drag element from left to right, place source right after target
+                listOrder.splice(sourceIdx, 1)
+                // targetIdx is now -1
+                const newTargetIdx = listOrder.indexOf(targetListId)
+
+                listOrder.splice(newTargetIdx + 1, 0, sourceListId)
+                console.log(listOrder)
+            } else {
+                // if drag element from right to left, place source right before target
+                listOrder.splice(sourceIdx, 1)
+                listOrder.splice(targetIdx, 0, sourceListId)
+                console.log(listOrder)
+            }
+
+            // lift up state to App Component
+            dispatchList(updateListOrder(listOrder))
+        }
+
+
+
 
     }
 
     const handleDragOver = (e) => {
         e.preventDefault();
         // console.log('data duoc get la', e.dataTransfer);
-        console.log('droppable element la ', e.target.closest(".list-content").id);
+        // console.log('droppable element la ', e.target.closest(".list-content").id);
+
+
 
     }
 
@@ -137,13 +175,23 @@ function List({ list }) {
     }, [])
 
 
+    // add draggable att to parent
+    const handleAddDraggable = (e) => {
+        e.target.closest(".list-content").setAttribute("draggable", true)
+    }
+
+    const handleRemoveDraggable = (e) => {
+        e.target.closest(".list-content").setAttribute("draggable", false)
+    }
+
+
 
 
     return (
         <div className='list-wrapper droppable-columns' >
             < div className="list-content"
                 ref={listWrapperRef}
-                draggable={draggable}
+                // draggable={draggable}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDrag={handleOnDrag}
@@ -153,8 +201,8 @@ function List({ list }) {
                 id={id}
             >
                 <div className="list-heading"
-                    onMouseDown={(e => setDraggable(true))}
-                    onMouseUp={e => setDraggable(false)}
+                    onMouseDown={handleAddDraggable}
+                    onMouseUp={handleRemoveDraggable}
                 // onMouseMove={handleOnMouseMove}
                 >
                     <h2 className="list-header-name">

@@ -1,7 +1,7 @@
-import { ADD_CARD, ADD_LIST, DELETE_LIST } from "./constants"
+import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER } from "./constants"
 import _ from 'lodash'
 export const initialListState = {
-    listOrder: ['list-2', 'list-3', 'list-1'],
+    listOrder: ['list-1', 'list-2', 'list-3'],
     lists: [
         {
             id: 'list-1',
@@ -124,6 +124,15 @@ const listReducer = (state, action) => {
 
             return {...state, lists}
         }
+
+        case UPDATE_LIST_ORDER: {
+            console.log(action.payload)
+            let newState = {...state, listOrder: action.payload}
+            console.log("newState ", newState);
+            return newState
+        }
+
+
         default:
             return state
     }
