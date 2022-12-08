@@ -6,11 +6,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
 import { createListId, reorder } from '../../utils';
 
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
 
 function List({ list }) {
     // console.log('rerender')
     const { title, cards, id, cardOrder } = list
-    console.log(list)
+    // console.log(list)
 
     const { dispatchList } = useContext(Context)
 
@@ -68,44 +70,66 @@ function List({ list }) {
         }
     }
 
+    // DnD
+    const listWrapperRef = useRef()
+
+    const handleOnDrag = (e) => {
+        listWrapperRef.current.classList.add('droppable')
+        listWrapperRef.current.classList.remove('draggable')
+        console.log(e)
+    }
+
+    const handleOnMouseUp = (e) => {
+        listWrapperRef.current.classList.add('draggable')
+        listWrapperRef.current.classList.remove('droppable')
+        console.log(e)
+    }
+
     return (
-
-        <div className="list-content">
-            <div className="list-heading">
-                <h2 className="list-header-name">
-                    {title}
-                </h2>
-            </div>
-
-            <div className="list-cards">
-                {boardCards.map((card, index) => <ListCard key={index} card={card} />)}
-            </div>
-
-            {!isCardShown && <div className="add-card-section">
-                <button className="add-btn" onClick={handleShowAddCardControl}>+ Add a card</button>
-                <button className="del-btn" onClick={() => handleDeleteList(id)}>Delete</button>
-            </div>}
-
-            {isCardShown && <div className="add-card-control" ref={addCardPanelRef}>
-                <div className='first-row'>
-                    <textarea type="text" className='add-card-title' placeholder='Enter a title  for this card...'
-                        ref={cardInputRef}
-                        value={cardValue}
-                        onChange={(e) => setCardValue(e.target.value)}
-                        onKeyDown={handleKeyDownCardInput} />
+        <div className='list-wrapper' >
+            < div className="list-content" ref={listWrapperRef}>
+                <div className="list-heading"
+                // onDrag={handleOnDrag}
+                // onMouseUp={handleOnMouseUp}
+                >
+                    <h2 className="list-header-name">
+                        {title}
+                    </h2>
                 </div>
 
-                <div className='second-row'>
-                    <button className="add-list-btn" onClick={() => handleAddCard(id)}>Add card</button>
-                    <button className="close-add-list-btn" onClick={handleHideAddCardControl}>
-                        <CloseIcon />
-                    </button>
+                <div className="list-cards">
+                    {boardCards.map((card, index) => <ListCard key={index} card={card} />)}
                 </div>
-            </div>}
+
+                {
+                    !isCardShown && <div className="add-card-section">
+                        <button className="add-btn" onClick={handleShowAddCardControl}>+ Add a card</button>
+                        <button className="del-btn" onClick={() => handleDeleteList(id)}>Delete</button>
+                    </div>
+                }
+
+                {
+                    isCardShown && <div className="add-card-control" ref={addCardPanelRef}>
+                        <div className='first-row'>
+                            <textarea type="text" className='add-card-title' placeholder='Enter a title  for this card...'
+                                ref={cardInputRef}
+                                value={cardValue}
+                                onChange={(e) => setCardValue(e.target.value)}
+                                onKeyDown={handleKeyDownCardInput} />
+                        </div>
+
+                        <div className='second-row'>
+                            <button className="add-list-btn" onClick={() => handleAddCard(id)}>Add card</button>
+                            <button className="close-add-list-btn" onClick={handleHideAddCardControl}>
+                                <CloseIcon />
+                            </button>
+                        </div>
+                    </div>
+                }
+
+            </div >
         </div>
-
-
     )
 }
 
-export default List
+export default List 

@@ -11,7 +11,7 @@ function AddList() {
     const addListRef = useRef()
 
     const { lists, dispatchList } = useContext(Context)
-    console.log(lists);
+    // console.log(lists);
 
 
     useOnClickOutside(addListRef, () => setIsOpen(false))

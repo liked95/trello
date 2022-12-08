@@ -1,7 +1,7 @@
 import { ADD_CARD, ADD_LIST, DELETE_LIST } from "./constants"
 import _ from 'lodash'
 export const initialListState = {
-    listOrder: ['list-2', 'list-1'],
+    listOrder: ['list-1', 'list-2', 'list-3'],
     lists: [
         {
             id: 'list-1',
@@ -46,6 +46,28 @@ export const initialListState = {
                     content: "Anonymous 6",
                 },
             ]
+        },
+        {
+            id: 'list-3',
+            title: "My title 3",
+            cardOrder: ['card-8', 'card-7', 'card-9'],
+            cards: [
+                {
+                    id: 'card-7',
+                    listId: 'list-3',
+                    content: "Anonymous 7",
+                },
+                {
+                    id: 'card-8',
+                    listId: 'list-3',
+                    content: "Anonymous 8",
+                },
+                {
+                    id: 'card-9',
+                    listId: 'list-3',
+                    content: "Anonymous 9",
+                },
+            ]
         }
     ]
 }
@@ -81,7 +103,7 @@ const listReducer = (state, action) => {
             console.log(action.payload)
             const { listId, id, content } = action.payload
             const lists = _.cloneDeep(state.lists)
-            
+
             lists.map(list => {
                 if (list.id !== listId) {
                     return list

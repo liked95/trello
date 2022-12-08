@@ -33,6 +33,11 @@ body,
   overflow: scroll;
 }
 
+.dashboard-columns {
+  display: flex;
+  /* flex-wrap: wrap; */
+}
+
 .list-wrapper {
   width: 272px;
   margin-top: 16px;
@@ -216,3 +221,5 @@ body,
 .add-card-title:focus {
   outline: none;
 }
+
+/* dnd  */
