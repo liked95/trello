@@ -14,7 +14,7 @@ function List({ list }) {
     const { title, cards, id, cardOrder } = list
     // console.log(list)
 
-    const { dispatchList } = useContext(Context)
+    const { dispatchList, initialData } = useContext(Context)
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
@@ -56,8 +56,6 @@ function List({ list }) {
 
         dispatchList(addCard(newCard))
         setCardValue("")
-
-
     }
 
     const handleHideAddCardControl = () => {
@@ -70,27 +68,94 @@ function List({ list }) {
         }
     }
 
+
+
     // DnD
     const listWrapperRef = useRef()
 
-    const handleOnDrag = (e) => {
-        listWrapperRef.current.classList.add('droppable')
-        listWrapperRef.current.classList.remove('draggable')
-        console.log(e)
+    const [isMouseDown, setIsMouseDown] = useState(false)
+    const [draggable, setDraggable] = useState(false)
+
+    const handleDragStart = (e) => {
+        var img = new Image();
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+        e.dataTransfer.setDragImage(img, 0, 0);
+
+        e.dataTransfer.setData("text", e.target.id);
+
     }
 
-    const handleOnMouseUp = (e) => {
-        listWrapperRef.current.classList.add('draggable')
-        listWrapperRef.current.classList.remove('droppable')
-        console.log(e)
+    const handleOnDrag = e => {
+        e.target.style.position = 'fixed'
+        e.target.style.width = '272px'
+        e.target.style.left = e.clientX + 'px'
+        e.target.style.top = e.clientY + 'px'
+        e.target.style.rotate = "3deg"
+        e.target.style.zIndex = 100
+
     }
+
+
+    const handleDragEnd = (e) => {
+        e.target.style.rotate = "0deg"
+        e.target.style.position = 'relative'
+        e.target.style.left = 0
+        e.target.style.top = 0
+        e.target.style.zIndex = 0
+    }
+
+    const handleOnDrop = (e) => {
+        // e.preventDefault()
+        // e.target.closest(".list-content").style.display = 'none';
+        // console.log(initialData.listOrder)
+        console.log("Source: ", e.dataTransfer.getData("text"))
+        console.log("Target: ", e.target.closest(".list-content").id)
+
+        // handle sorting list ID logic
+
+    }
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        // console.log('data duoc get la', e.dataTransfer);
+        console.log('droppable element la ', e.target.closest(".list-content").id);
+
+    }
+
+    const handleOnClick = e => {
+        const value = e.target.getBoundingClientRect()
+        console.log('rect', value.x, value.y)
+        console.log('mouse', e.clientX, e.clientY)
+    }
+
+    useEffect(() => {
+        document.addEventListener('mouseup', (e) => {
+            e.preventDefault()
+            console.log("Tha r ne")
+            setDraggable(false)
+        })
+    }, [])
+
+
+
 
     return (
-        <div className='list-wrapper' >
-            < div className="list-content" ref={listWrapperRef}>
+        <div className='list-wrapper droppable-columns' >
+            < div className="list-content"
+                ref={listWrapperRef}
+                draggable={draggable}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDrag={handleOnDrag}
+                onClick={handleOnClick}
+                onDragOver={handleDragOver}
+                onDrop={handleOnDrop}
+                id={id}
+            >
                 <div className="list-heading"
-                // onDrag={handleOnDrag}
-                // onMouseUp={handleOnMouseUp}
+                    onMouseDown={(e => setDraggable(true))}
+                    onMouseUp={e => setDraggable(false)}
+                // onMouseMove={handleOnMouseMove}
                 >
                     <h2 className="list-header-name">
                         {title}
@@ -128,7 +193,7 @@ function List({ list }) {
                 }
 
             </div >
-        </div>
+        </div >
     )
 }
 

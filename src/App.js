@@ -18,8 +18,9 @@ function App() {
   const [boardLists, setBoardLists] = useState([])
 
   useEffect(() => {
-    reorder(initialData.lists, initialData.listOrder, 'id')
-    setBoardLists(initialData.lists)
+    let lists = reorder(initialData.lists, initialData.listOrder, 'id')
+    // console.log(initialData.lists)
+    setBoardLists(lists)
   }, [initialData])
 
 

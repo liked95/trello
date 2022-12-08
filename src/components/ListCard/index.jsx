@@ -9,7 +9,7 @@ function ListCard({ card }) {
     }
     
     return (
-        <div className='list-card-wrapper'>
+        <div className='list-card-wrapper' id={id}>
             <textarea className="list-card-detail" value={value} onChange={handleChangeCardContent} />
         </div>
     )

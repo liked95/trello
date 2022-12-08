@@ -1,12 +1,12 @@
 import { ADD_CARD, ADD_LIST, DELETE_LIST } from "./constants"
 import _ from 'lodash'
 export const initialListState = {
-    listOrder: ['list-1', 'list-2', 'list-3'],
+    listOrder: ['list-2', 'list-3', 'list-1'],
     lists: [
         {
             id: 'list-1',
             title: "My title 1",
-            cardOrder: ['card-2', 'card-3', 'card-1'],
+            cardOrder: ['card-2', 'card-1', 'card-3'],
             cards: [
                 {
                     id: 'card-1',
