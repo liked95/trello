@@ -137,9 +137,9 @@ const listReducer = (state, action) => {
         }
 
         case UPDATE_LIST_ORDER: {
-            console.log(action.payload)
+            // console.log(action.payload)
             let newState = {...clonedState, listOrder: action.payload}
-            console.log("newState ", newState);
+            // console.log("newState ", newState);
             return newState
         }
 

@@ -1,10 +1,11 @@
 import React, { useContext, useRef, useState, useEffect, Component } from 'react'
 import { Context } from '../../context'
 import { addCard, deleteList, updateListOrder } from '../../store/actions'
-import ListCard from '../ListCard'
+import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
 import { createListId, reorder } from '../../utils';
+import _ from 'lodash'
 
 
 
@@ -55,6 +56,8 @@ function List({ list }) {
         }
 
         dispatchList(addCard(newCard))
+        // const updateCards = _.cloneDeep(cards)
+        // setBoardCards([...updateCards, newCard])
         setCardValue("")
     }
 
@@ -71,7 +74,7 @@ function List({ list }) {
 
 
     // DnD
-    const listWrapperRef = useRef()
+    
 
     const [isMouseDown, setIsMouseDown] = useState(false)
     // const [draggable, setDraggable] = useState(false)
@@ -85,34 +88,38 @@ function List({ list }) {
         img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
         e.dataTransfer.setDragImage(img, 0, 0);
 
-        e.dataTransfer.setData("text", e.target.id);
+        e.dataTransfer.setData("text", e.currentTarget.id);
+        console.log(e.currentTarget.id)
 
-        const clonedEle = e.target.cloneNode(true)
+        const clonedEle = e.currentTarget.cloneNode(true)
         clonedEle.id = 'clone-element'
         clonedEle.style.display = "none"
-        e.target.closest(".list-wrapper").appendChild(clonedEle)
-
+        e.currentTarget.closest(".list-wrapper").appendChild(clonedEle)
+        
         
 
         onDragCoordDiff = {
-            dx: e.target.getBoundingClientRect().x - e.clientX,
-            dy: e.target.getBoundingClientRect().y - e.clientY
+            dx: e.currentTarget.getBoundingClientRect().x - e.clientX,
+            dy: e.currentTarget.getBoundingClientRect().y - e.clientY
         }
 
 
     }
 
     const handleOnDrag = e => {
+        console.log("List", e)
+        
         // style source element
         // e.target.style.display = "none"
-        e.target.style.pointerEvents = 'none'
+        e.currentTarget.style.pointerEvents = 'none'
 
 
         const diffX = onDragCoordDiff.dx
         const diffY = onDragCoordDiff.dy
-        console.log(diffX, diffY)
+        // console.log(diffX, diffY)
 
-        const sourceEle = e.target
+        const sourceEle = e.currentTarget
+        // console.log(e)
         sourceEle.style.position = 'fixed'
         sourceEle.style.width = '272px'
         sourceEle.style.left = e.clientX + diffX + 'px'
@@ -135,14 +142,14 @@ function List({ list }) {
 
     const handleDragEnd = (e) => {
         // allow user to drag again 
-        e.target.style.pointerEvents = 'auto'
+        e.currentTarget.style.pointerEvents = 'auto'
         // reset style
-        e.target.style.rotate = "0deg"
-        e.target.style.position = 'relative'
-        e.target.style.left = 0
-        e.target.style.top = 0
-        e.target.style.zIndex = 0
-        e.target.style.display = "block"
+        e.currentTarget.style.rotate = "0deg"
+        e.currentTarget.style.position = 'relative'
+        e.currentTarget.style.left = 0
+        e.currentTarget.style.top = 0
+        e.currentTarget.style.zIndex = 0
+        e.currentTarget.style.display = "block"
 
 
 
@@ -163,13 +170,13 @@ function List({ list }) {
 
         // handle sorting list ID logic
         const sourceListId = e.dataTransfer.getData("text")
-        const targetListId = e.target.closest(".list-content").id
+        const targetListId = e.currentTarget.closest(".list-content").id
 
-        console.log("Source: ", sourceListId)
-        console.log("Target: ", targetListId)
+        // console.log("Source: ", sourceListId)
+        // console.log("Target: ", targetListId)
 
         if (sourceListId && targetListId) {
-            console.log(true)
+            // console.log(true)
             const listOrder = initialData.listOrder
             const sourceIdx = listOrder.indexOf(sourceListId)
             const targetIdx = listOrder.indexOf(targetListId)
@@ -180,12 +187,12 @@ function List({ list }) {
                 const newTargetIdx = listOrder.indexOf(targetListId)
 
                 listOrder.splice(newTargetIdx + 1, 0, sourceListId)
-                console.log(listOrder)
+                // console.log(listOrder)
             } else {
                 // if drag element from right to left, place source right before target
                 listOrder.splice(sourceIdx, 1)
                 listOrder.splice(targetIdx, 0, sourceListId)
-                console.log(listOrder)
+                // console.log(listOrder)
             }
 
             // lift up state to App Component
@@ -197,22 +204,22 @@ function List({ list }) {
     const handleDragOver = (e) => {
         e.preventDefault();
         // console.log('data duoc get la', e.dataTransfer);
-        console.log('droppable element la ');
+        // console.log('droppable element la ');
 
 
 
     }
 
     const handleOnClick = e => {
-        const value = e.target.getBoundingClientRect()
-        console.log('rect', value.x, value.y)
-        console.log('mouse', e.clientX, e.clientY)
+        const value = e.currentTarget.getBoundingClientRect()
+        // console.log('rect', value.x, value.y)
+        // console.log('mouse', e.clientX, e.clientY)
     }
 
     useEffect(() => {
         document.addEventListener('mouseup', (e) => {
             e.preventDefault()
-            console.log("Tha r ne")
+            // console.log("Tha r ne")
             // setDraggable(false)
         })
     }, [])
@@ -220,11 +227,11 @@ function List({ list }) {
 
     // add draggable att to parent
     const handleAddDraggable = (e) => {
-        e.target.closest(".list-content").setAttribute("draggable", true)
+        e.currentTarget.closest(".list-content").setAttribute("draggable", true)
     }
 
     const handleRemoveDraggable = (e) => {
-        e.target.closest(".list-content").setAttribute("draggable", false)
+        e.currentTarget.closest(".list-content").setAttribute("draggable", false)
     }
 
 
@@ -233,8 +240,6 @@ function List({ list }) {
     return (
         <div className='list-wrapper droppable-columns' >
             < div className="list-content"
-                ref={listWrapperRef}
-                // draggable={draggable}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDrag={handleOnDrag}
@@ -254,7 +259,7 @@ function List({ list }) {
                 </div>
 
                 <div className="list-cards">
-                    {boardCards.map((card, index) => <ListCard key={card.id} card={card} />)}
+                    {boardCards.map((card, index) => <Card key={card.id} card={card} />)}
                 </div>
 
                 {
