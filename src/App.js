@@ -35,7 +35,7 @@ function App() {
     <div className="App">
       <div className='dashboard'  >
         <div className='dashboard-columns'>
-          {boardLists.map((list, index) => <List list={list} key={index} />)}
+          {boardLists.map((list, index) => <List list={list} key={list.id}  />)}
         </div>
         <AddList />
       </div>
