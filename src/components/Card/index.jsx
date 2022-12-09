@@ -30,7 +30,8 @@ function Card({ card }) {
         const clonedEle = e.target.cloneNode(true)
         clonedEle.id = 'clone-card-element'
         clonedEle.style.display = "none"
-        e.currentTarget.closest(".list-card").appendChild(clonedEle)
+        console.log(e.currentTarget)
+        e.currentTarget.closest(".list-cards").appendChild(clonedEle)
     }
 
     const handleOnDrag = e => {
@@ -64,8 +65,12 @@ function Card({ card }) {
         cloneEle.style.backgroundColor = "rgba(0, 0, 0, 0.2)"
     }
 
+    const handleDragEnd = e => {
+        e.stopPropagation()
+    }
 
 
+    ////////////////////////////////////////
     const handleAddDraggable = (e) => {
         e.stopPropagation()
         e.currentTarget.closest(".list-card-wrapper").setAttribute("draggable", true)
