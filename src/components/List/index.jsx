@@ -74,24 +74,59 @@ function List({ list }) {
     const listWrapperRef = useRef()
 
     const [isMouseDown, setIsMouseDown] = useState(false)
-    const [draggable, setDraggable] = useState(false)
+    // const [draggable, setDraggable] = useState(false)
+    // const [onDragCoordDif, setOnDragCoordDif] = useState({})
+    var onDragCoordDiff = {}
 
     const handleDragStart = (e) => {
+        
+
         var img = new Image();
         img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
         e.dataTransfer.setDragImage(img, 0, 0);
 
         e.dataTransfer.setData("text", e.target.id);
 
+        const clonedEle = e.target.cloneNode(true)
+        clonedEle.id = 'clone-element'
+        clonedEle.style.display = "none"
+        e.target.closest(".list-wrapper").appendChild(clonedEle)
+
+        
+
+        onDragCoordDiff = {
+            dx: e.target.getBoundingClientRect().x - e.clientX,
+            dy: e.target.getBoundingClientRect().y - e.clientY
+        }
+
+
     }
 
     const handleOnDrag = e => {
-        e.target.style.position = 'fixed'
-        e.target.style.width = '272px'
-        e.target.style.left = e.clientX + 'px'
-        e.target.style.top = e.clientY + 'px'
-        e.target.style.rotate = "3deg"
-        e.target.style.zIndex = 100
+        // style source element
+        // e.target.style.display = "none"
+        e.target.style.pointerEvents = 'none'
+
+
+        const diffX = onDragCoordDiff.dx
+        const diffY = onDragCoordDiff.dy
+        console.log(diffX, diffY)
+
+        const sourceEle = e.target
+        sourceEle.style.position = 'fixed'
+        sourceEle.style.width = '272px'
+        sourceEle.style.left = e.clientX + diffX + 'px'
+        sourceEle.style.top = e.clientY + diffY + 'px'
+        sourceEle.style.rotate = "3deg"
+        sourceEle.style.zIndex = 1000
+
+        const cloneEle = document.getElementById("clone-element")
+        cloneEle.style.display = "block"
+        Array.from(cloneEle.querySelectorAll("div")).forEach(div => {
+            // div.style.backgroundColor = "red"
+            div.style.visibility = "hidden"
+        })
+        cloneEle.style.backgroundColor = "rgba(0, 0, 0, 0.2)"
 
 
 
@@ -99,26 +134,37 @@ function List({ list }) {
 
 
     const handleDragEnd = (e) => {
+        // allow user to drag again 
+        e.target.style.pointerEvents = 'auto'
+        // reset style
         e.target.style.rotate = "0deg"
         e.target.style.position = 'relative'
         e.target.style.left = 0
         e.target.style.top = 0
         e.target.style.zIndex = 0
+        e.target.style.display = "block"
+
 
 
         //disable drag attribute when mouse release
         let allLists = Array.from(document.querySelectorAll(".list-content"))
         allLists.forEach(list => list.setAttribute('draggable', false))
+
+        document.getElementById("clone-element").remove()
+
+        // reset coordinate
+        onDragCoordDiff = {}
+
     }
 
     const handleOnDrop = (e) => {
         e.preventDefault()
-        // e.target.closest(".list-content").style.display = 'none';
-        // console.log(initialData.listOrder)
+        
 
         // handle sorting list ID logic
         const sourceListId = e.dataTransfer.getData("text")
         const targetListId = e.target.closest(".list-content").id
+
         console.log("Source: ", sourceListId)
         console.log("Target: ", targetListId)
 
@@ -146,15 +192,12 @@ function List({ list }) {
             dispatchList(updateListOrder(listOrder))
         }
 
-
-
-
     }
 
     const handleDragOver = (e) => {
         e.preventDefault();
         // console.log('data duoc get la', e.dataTransfer);
-        // console.log('droppable element la ', e.target.closest(".list-content").id);
+        console.log('droppable element la ');
 
 
 
@@ -170,7 +213,7 @@ function List({ list }) {
         document.addEventListener('mouseup', (e) => {
             e.preventDefault()
             console.log("Tha r ne")
-            setDraggable(false)
+            // setDraggable(false)
         })
     }, [])
 

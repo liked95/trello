@@ -22,7 +22,7 @@ body,
 }
 
 .dashboard {
-  background-color: #d29034;
+  background-color: #519839;
   padding: 0 8px;
   padding-top: 16px;
   display: flex;
@@ -50,6 +50,7 @@ body,
   height: auto;
   border-radius: 3px;
   padding: 0 4px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .list-heading {
