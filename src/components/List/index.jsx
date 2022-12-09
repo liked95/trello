@@ -6,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
 import { createListId, reorder } from '../../utils';
 
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 
 function List({ list }) {
@@ -30,6 +29,7 @@ function List({ list }) {
 
     // handle close when click outside
     const addCardPanelRef = useRef()
+
     useClickOutsideHandler(addCardPanelRef, () => setIsCardShown(false))
 
     const handleDeleteList = id => {
@@ -211,7 +211,7 @@ function List({ list }) {
                 </div>
 
                 <div className="list-cards">
-                    {boardCards.map((card, index) => <ListCard key={index} card={card} />)}
+                    {boardCards.map((card, index) => <ListCard key={card.id} card={card} />)}
                 </div>
 
                 {

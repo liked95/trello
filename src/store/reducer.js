@@ -11,17 +11,17 @@ export const initialListState = {
                 {
                     id: 'card-1',
                     listId: 'list-1',
-                    content: "Lorem 1",
+                    content: "First 1",
                 },
                 {
                     id: 'card-2',
                     listId: 'list-1',
-                    content: "Lorem 2",
+                    content: "First 2",
                 },
                 {
                     id: 'card-3',
                     listId: 'list-1',
-                    content: "Lorem 3",
+                    content: "First 3",
                 },
             ]
         },
@@ -33,39 +33,49 @@ export const initialListState = {
                 {
                     id: 'card-4',
                     listId: 'list-2',
-                    content: "Anonymous 4",
+                    content: "Second 4",
                 },
                 {
                     id: 'card-5',
                     listId: 'list-2',
-                    content: "Anonymous 5",
+                    content: "Second 5",
                 },
                 {
                     id: 'card-6',
                     listId: 'list-2',
-                    content: "Anonymous 6",
+                    content: "Second 6",
                 },
             ]
         },
         {
             id: 'list-3',
             title: "My title 3",
-            cardOrder: ['card-8', 'card-7', 'card-9'],
+            cardOrder: ['card-8', 'card-7', 'card-9', 'card-10', 'card-11'],
             cards: [
                 {
                     id: 'card-7',
                     listId: 'list-3',
-                    content: "Anonymous 7",
+                    content: "Third 7",
                 },
                 {
                     id: 'card-8',
                     listId: 'list-3',
-                    content: "Anonymous 8",
+                    content: "Third 8",
                 },
                 {
                     id: 'card-9',
                     listId: 'list-3',
-                    content: "Anonymous 9",
+                    content: "Third 9",
+                },
+                {
+                    id: 'card-10',
+                    listId: 'list-3',
+                    content: "Third 10",
+                },
+                {
+                    id: 'card-11',
+                    listId: 'list-3',
+                    content: "Third 11",
                 },
             ]
         }
@@ -73,10 +83,11 @@ export const initialListState = {
 }
 
 const listReducer = (state, action) => {
+    let clonedState = _.cloneDeep(state)
     switch (action.type) {
         case ADD_LIST: {
-            const listOrder = [...state.listOrder, action.payload.id]
-            const lists = _.cloneDeep(state.lists)
+            const listOrder = [...clonedState.listOrder, action.payload.id]
+            const lists = _.cloneDeep(clonedState.lists)
             lists.push({
                 id: action.payload.id,
                 title: action.payload.title,
@@ -84,25 +95,25 @@ const listReducer = (state, action) => {
                 cardOrder: action.payload.cardOrder,
 
             })
-            console.log({ ...state, listOrder, lists })
-            return { ...state, listOrder, lists }
+            console.log({ ...clonedState, listOrder, lists })
+            return { ...clonedState, listOrder, lists }
         }
 
         case DELETE_LIST: {
             let listId = action.payload
-            let listOrderIdx = state.listOrder.indexOf(listId)
-            const listOrder = [...state.listOrder].splice(listOrderIdx, 1)
-            let listIdx = state.lists.indexOf(listId)
-            const lists = _.cloneDeep(state.lists)
+            let listOrderIdx = clonedState.listOrder.indexOf(listId)
+            const listOrder = [...clonedState.listOrder].splice(listOrderIdx, 1)
+            let listIdx = clonedState.lists.indexOf(listId)
+            const lists = _.cloneDeep(clonedState.lists)
             lists.splice(listIdx, 1)
 
-            return { ...state, listOrder, lists }
+            return { ...clonedState, listOrder, lists }
         }
 
         case ADD_CARD: {
             console.log(action.payload)
             const { listId, id, content } = action.payload
-            const lists = _.cloneDeep(state.lists)
+            const lists = _.cloneDeep(clonedState.lists)
 
             lists.map(list => {
                 if (list.id !== listId) {
@@ -122,12 +133,12 @@ const listReducer = (state, action) => {
 
             console.log(lists)
 
-            return {...state, lists}
+            return {...clonedState, lists}
         }
 
         case UPDATE_LIST_ORDER: {
             console.log(action.payload)
-            let newState = {...state, listOrder: action.payload}
+            let newState = {...clonedState, listOrder: action.payload}
             console.log("newState ", newState);
             return newState
         }
