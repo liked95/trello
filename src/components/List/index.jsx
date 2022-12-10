@@ -4,7 +4,7 @@ import { addCard, deleteList, updateListOrder } from '../../store/actions'
 import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
-import { createListId, reorder } from '../../utils';
+import { createListId, reorder, updateOrder } from '../../utils';
 import _ from 'lodash'
 
 
@@ -22,8 +22,19 @@ function List({ list }) {
 
     useEffect(() => {
         reorder(cards, cardOrder, 'id')
+        console.log(cards)
         setBoardCards(cards)
     }, [list])
+
+    // lift up state cards update in the same list
+    const handleUpdateCardsSameList = (obj) => {
+        console.log(obj, cardOrder)
+        updateOrder(obj.dragCardId, obj.dropCardId, cardOrder)
+        console.log(cardOrder)
+        const updateCards = reorder(_.cloneDeep(boardCards), cardOrder, 'id')
+        console.log(updateCards)
+        setBoardCards(updateCards)
+    }
 
 
     const cardInputRef = useRef()
@@ -74,7 +85,7 @@ function List({ list }) {
 
 
     // DnD
-    
+
 
     const [isMouseDown, setIsMouseDown] = useState(false)
     // const [draggable, setDraggable] = useState(false)
@@ -82,21 +93,21 @@ function List({ list }) {
     var onDragCoordDiff = {}
 
     const handleDragStart = (e) => {
-        
+        console.log(e.currentTarget.id)
+
 
         var img = new Image();
         img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
         e.dataTransfer.setDragImage(img, 0, 0);
 
         e.dataTransfer.setData("text", e.currentTarget.id);
-        console.log(e.currentTarget.id)
 
         const clonedEle = e.currentTarget.cloneNode(true)
         clonedEle.id = 'clone-element'
         clonedEle.style.display = "none"
         e.currentTarget.closest(".list-wrapper").appendChild(clonedEle)
-        
-        
+
+
 
         onDragCoordDiff = {
             dx: e.currentTarget.getBoundingClientRect().x - e.clientX,
@@ -107,8 +118,8 @@ function List({ list }) {
     }
 
     const handleOnDrag = e => {
-        console.log("List", e)
-        
+        // console.log("List", e)
+
         // style source element
         // e.target.style.display = "none"
         e.currentTarget.style.pointerEvents = 'none'
@@ -134,9 +145,7 @@ function List({ list }) {
             div.style.visibility = "hidden"
         })
         cloneEle.style.backgroundColor = "rgba(0, 0, 0, 0.2)"
-
-
-
+        // console.log("on drag list")
     }
 
 
@@ -152,6 +161,7 @@ function List({ list }) {
         e.currentTarget.style.display = "block"
 
 
+        console.log('List drag end')
 
         //disable drag attribute when mouse release
         let allLists = Array.from(document.querySelectorAll(".list-content"))
@@ -166,37 +176,45 @@ function List({ list }) {
 
     const handleOnDrop = (e) => {
         e.preventDefault()
-        
+
+        // console.log(e)
+
 
         // handle sorting list ID logic
         const sourceListId = e.dataTransfer.getData("text")
+
+        // disable card drop on list
+        if (sourceListId.includes('&')) return
+
         const targetListId = e.currentTarget.closest(".list-content").id
 
         // console.log("Source: ", sourceListId)
         // console.log("Target: ", targetListId)
 
         if (sourceListId && targetListId) {
-            // console.log(true)
-            const listOrder = initialData.listOrder
-            const sourceIdx = listOrder.indexOf(sourceListId)
-            const targetIdx = listOrder.indexOf(targetListId)
-            if (sourceIdx < targetIdx) {
-                // if drag element from left to right, place source right after target
-                listOrder.splice(sourceIdx, 1)
-                // targetIdx is now -1
-                const newTargetIdx = listOrder.indexOf(targetListId)
+            // // console.log(true)
+            // const listOrder = initialData.listOrder
+            // const sourceIdx = listOrder.indexOf(sourceListId)
+            // const targetIdx = listOrder.indexOf(targetListId)
+            // if (sourceIdx < targetIdx) {
+            //     // if drag element from left to right, place source right after target
+            //     listOrder.splice(sourceIdx, 1)
+            //     // targetIdx is now -1
+            //     const newTargetIdx = listOrder.indexOf(targetListId)
 
-                listOrder.splice(newTargetIdx + 1, 0, sourceListId)
-                // console.log(listOrder)
-            } else {
-                // if drag element from right to left, place source right before target
-                listOrder.splice(sourceIdx, 1)
-                listOrder.splice(targetIdx, 0, sourceListId)
-                // console.log(listOrder)
-            }
+            //     listOrder.splice(newTargetIdx + 1, 0, sourceListId)
+            //     // console.log(listOrder)
+            // } else {
+            //     // if drag element from right to left, place source right before target
+            //     listOrder.splice(sourceIdx, 1)
+            //     listOrder.splice(targetIdx, 0, sourceListId)
+            //     // console.log(listOrder)
+            // }
+
+            updateOrder(sourceListId, targetListId, initialData.listOrder)
 
             // lift up state to App Component
-            dispatchList(updateListOrder(listOrder))
+            dispatchList(updateListOrder(initialData.listOrder))
         }
 
     }
@@ -237,6 +255,7 @@ function List({ list }) {
 
 
 
+
     return (
         <div className='list-wrapper droppable-columns' >
             < div className="list-content"
@@ -259,7 +278,7 @@ function List({ list }) {
                 </div>
 
                 <div className="list-cards">
-                    {boardCards.map((card, index) => <Card key={card.id} card={card} />)}
+                    {boardCards.map((card, index) => <Card key={card.id} card={card} onUpdateCardsSameList={handleUpdateCardsSameList} />)}
                 </div>
 
                 {

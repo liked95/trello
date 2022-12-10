@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import { compact } from 'lodash';
+import React, { useState, useEffect, useContext } from 'react'
+import { Context } from '../../context';
+import { updateCardsSameList } from '../../store/actions';
 
-function Card({ card }) {
+function Card({ card, onUpdateCardsSameList }) {
     const { id, content } = card
+    // console.log(onUpdateCardsSameList);
     const [value, setValue] = useState(content)
+
+    const { dispatchList, initialData } = useContext(Context)
 
     useEffect(() => {
         setValue(content)
@@ -17,57 +23,77 @@ function Card({ card }) {
 
 
     // DnD
-    const handleDragStart = (e) => {
-        // e.preventDefault()
-        // e.stopPropagation()
-        console.log(e)
-        var img = new Image();
-        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
-        e.dataTransfer.setDragImage(img, 0, 0);
 
-        e.dataTransfer.setData("text", e.target.id);
 
-        const clonedEle = e.target.cloneNode(true)
-        clonedEle.id = 'clone-card-element'
-        clonedEle.style.display = "none"
-        console.log(e.currentTarget)
-        e.currentTarget.closest(".list-cards").appendChild(clonedEle)
+    const handleDragStart = e => {
+        e.stopPropagation()
+
+        // var img = new Image();
+        // img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+        // e.dataTransfer.setDragImage(img, 0, 0);
+        const currentTarget = e.currentTarget
+        const listWrapperEl = currentTarget.closest(".list-content")
+
+        e.dataTransfer.setData("text", currentTarget.id + "&" + listWrapperEl.id);
+
+
+
+
+
     }
 
     const handleOnDrag = e => {
-        e.preventDefault()
         e.stopPropagation()
-        console.log(e)
-        // style source element
-        // e.target.style.display = "none"
-        e.currentTarget.style.pointerEvents = 'none'
 
 
-        // const diffX = onDragCoordDiff.dx
-        // const diffY = onDragCoordDiff.dy
-        // console.log(diffX, diffY)
-
-        const sourceEle = e.currentTarget
-        // console.log(e)
-        sourceEle.style.position = 'fixed'
-        sourceEle.style.width = '272px'
-        sourceEle.style.left = e.clientX + 'px'
-        sourceEle.style.top = e.clientY + 'px'
-        sourceEle.style.rotate = "3deg"
-        sourceEle.style.zIndex = 1000
-
-        const cloneEle = document.getElementById("clone-element")
-        cloneEle.style.display = "block"
-        Array.from(cloneEle.querySelectorAll("div")).forEach(div => {
-            // div.style.backgroundColor = "red"
-            div.style.visibility = "hidden"
-        })
-        cloneEle.style.backgroundColor = "rgba(0, 0, 0, 0.2)"
     }
 
     const handleDragEnd = e => {
         e.stopPropagation()
     }
+
+    const handleOnDrop = e => {
+        e.preventDefault()
+        // e.stopPropagation()
+        const data = e.dataTransfer.getData("text")
+
+        if (!data.includes("&")) return
+        const dropCardTarget = e.currentTarget
+        const dropListTarget = dropCardTarget.closest(".list-content")
+        const [dragCardId, dragListId] = data.split("&")
+        const dropCardId = dropCardTarget.id
+        const dropListId = dropListTarget.id
+
+        // console.log(dragCardId, dragListId, dropCardId, dropListId)
+
+        // do nothing if drop and drag is the same element
+        if (dragCardId == dropCardId) return
+
+        // if card is dnd within the same list
+        if (dragListId == dropListId) {
+            console.log("Same col")
+
+            // dispatchList(updateCardsSameList({
+            //     listId: dropListId,
+            //     dragCardId,
+            //     dropCardId
+            // }))
+
+            // lift up state back to List component
+            onUpdateCardsSameList({
+                listId: dropListId,
+                dragCardId,
+                dropCardId
+            })
+
+        } else {
+            console.log("Diff col")
+        }
+
+        // const targetListId = e.currentTarget.closest(".list-content").id
+
+    }
+
 
 
     ////////////////////////////////////////
@@ -87,10 +113,10 @@ function Card({ card }) {
             // draggable
             onDragStart={handleDragStart}
             onDrag={handleOnDrag}
-            // onDragEnd={handleDragEnd}
+            onDragEnd={handleDragEnd}
             // onClick={handleOnClick}
             // onDragOver={handleDragOver}
-            // onDrop={handleOnDrop}
+            onDrop={handleOnDrop}
             onMouseDown={handleAddDraggable}
             onMouseUp={handleRemoveDraggable}
 

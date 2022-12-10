@@ -3,3 +3,4 @@ export const DELETE_LIST = "DELETE_LIST"
 
 export const ADD_CARD = "ADD_CARD"
 export const UPDATE_LIST_ORDER = "UPDATE_LIST_ORDER"
+export const UPDATE_CARDS_SAME_LIST = "UPDATE_CARDS_SAME_LIST"

@@ -1,4 +1,4 @@
-import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER } from "./constants"
+import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_SAME_LIST} from "./constants"
 import _ from 'lodash'
 export const initialListState = {
     listOrder: ['list-1', 'list-2', 'list-3'],
@@ -141,6 +141,13 @@ const listReducer = (state, action) => {
             let newState = {...clonedState, listOrder: action.payload}
             // console.log("newState ", newState);
             return newState
+        }
+
+        case UPDATE_CARDS_SAME_LIST: {
+            // console.log(action.payload)
+            const {listId, dragCardId, dropListId} = action.payload
+
+            return state
         }
 
 
