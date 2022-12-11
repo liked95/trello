@@ -26,3 +26,13 @@ export function updateOrder(source, target, arr) {
         // console.log(arr)
     }
 }
+
+
+export function saveToLocal(key, data) {
+    localStorage.setItem(key, JSON.stringify(data))
+}
+
+
+export function getFromLocal(key) {
+    return JSON.parse(localStorage.getItem(key))
+}

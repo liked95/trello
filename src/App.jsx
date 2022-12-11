@@ -17,6 +17,7 @@ function App() {
   // console.log(initialData)
   const [boardLists, setBoardLists] = useState([])
 
+
   useEffect(() => {
     let lists = reorder(initialData.lists, initialData.listOrder, 'id')
     // console.log(initialData.lists)
@@ -30,12 +31,33 @@ function App() {
   //   // console.log(newListOrder);
   // }
 
+  let deleteData = null
+  // get what dragCardId to delete from dragListId from List component 
+  // and then pass these data to another List
+  const handleGetDragList = (value) => {
+    console.log("value >> ", value)
+    // setDeleteData(value)
+    deleteData = value
+
+    // pass to drag list
+  }
+
+  const handleDeleteDragCard = (value) => {
+    console.log("value to delete >> ", value)
+  }
+
 
   return (
     <div className="App">
       <div className='dashboard'  >
         <div className='dashboard-columns'>
-          {boardLists.map((list, index) => <List list={list} key={list.id}  />)}
+          {boardLists.map((list, index) => <List
+            list={list}
+            key={list.id}
+            onHandleGetDragList={handleGetDragList}
+            onHandleDeleteDragCard={handleDeleteDragCard}
+            deleteData={deleteData}
+          />)}
         </div>
         <AddList />
       </div>

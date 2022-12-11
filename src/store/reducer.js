@@ -1,5 +1,6 @@
-import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_SAME_LIST} from "./constants"
+import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_SAME_LIST } from "./constants"
 import _ from 'lodash'
+import { saveToLocal } from "../utils"
 export const initialListState = {
     listOrder: ['list-1', 'list-2', 'list-3'],
     lists: [
@@ -95,19 +96,29 @@ const listReducer = (state, action) => {
                 cardOrder: action.payload.cardOrder,
 
             })
-            console.log({ ...clonedState, listOrder, lists })
+
+
+            saveToLocal("data", { ...clonedState, listOrder, lists })
             return { ...clonedState, listOrder, lists }
         }
 
         case DELETE_LIST: {
             let listId = action.payload
-            let listOrderIdx = clonedState.listOrder.indexOf(listId)
-            const listOrder = [...clonedState.listOrder].splice(listOrderIdx, 1)
-            let listIdx = clonedState.lists.indexOf(listId)
-            const lists = _.cloneDeep(clonedState.lists)
-            lists.splice(listIdx, 1)
 
-            return { ...clonedState, listOrder, lists }
+            let listOrderIdx = clonedState.listOrder.indexOf(listId)
+            clonedState.listOrder.splice(listOrderIdx, 1)
+
+            let listIdx = clonedState.lists.indexOf(listId)
+            clonedState.lists.splice(listIdx, 1)
+
+            const newState = {
+                ...clonedState,
+                listOrder: clonedState.listOrder,
+                lists: clonedState.lists
+            }
+
+            saveToLocal("data", newState)
+            return newState
         }
 
         case ADD_CARD: {
@@ -133,19 +144,25 @@ const listReducer = (state, action) => {
 
             console.log(lists)
 
-            return {...clonedState, lists}
+            saveToLocal("data", { ...clonedState, lists })
+            return { ...clonedState, lists }
         }
 
         case UPDATE_LIST_ORDER: {
             // console.log(action.payload)
-            let newState = {...clonedState, listOrder: action.payload}
-            // console.log("newState ", newState);
+            let newState = { ...clonedState, listOrder: action.payload }
+
+
+            saveToLocal("data", newState)
+            
             return newState
         }
 
         case UPDATE_CARDS_SAME_LIST: {
             // console.log(action.payload)
-            const {listId, dragCardId, dropListId} = action.payload
+            const { listId, dragCardId, dropListId } = action.payload
+
+
 
             return state
         }

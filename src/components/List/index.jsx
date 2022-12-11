@@ -4,17 +4,19 @@ import { addCard, deleteList, updateListOrder } from '../../store/actions'
 import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
-import { createListId, reorder, updateOrder } from '../../utils';
+import { createListId, reorder, saveToLocal, updateOrder } from '../../utils';
 import _ from 'lodash'
 
 
 
-function List({ list }) {
-    // console.log('rerender')
+function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
+    // console.log(deleteData)
     const { title, cards, id, cardOrder } = list
     // console.log(list)
 
     const { dispatchList, initialData } = useContext(Context)
+    const data = _.cloneDeep(initialData)
+
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
@@ -22,18 +24,67 @@ function List({ list }) {
 
     useEffect(() => {
         reorder(cards, cardOrder, 'id')
-        console.log(cards)
+        // console.log(cards)
         setBoardCards(cards)
     }, [list])
 
     // lift up state cards update in the same list
     const handleUpdateCardsSameList = (obj) => {
-        console.log(obj, cardOrder)
         updateOrder(obj.dragCardId, obj.dropCardId, cardOrder)
-        console.log(cardOrder)
         const updateCards = reorder(_.cloneDeep(boardCards), cardOrder, 'id')
-        console.log(updateCards)
         setBoardCards(updateCards)
+
+        // save to local without dispatching
+        const data = _.cloneDeep(initialData)
+        const list = data.lists.find(list => list.id == id)
+        list.cards = updateCards
+        list.cardOrder = cardOrder
+        saveToLocal("data", data)
+
+
+    }
+
+
+
+    // lift up state cards update in the different lists
+    const handleUpdateCardsBetweenLists = obj => {
+        console.log(obj)
+        console.log(id)
+        const { dragCardId, dragListId, dropCardId, dropListId } = obj
+
+        // handle source list
+        if (dragListId == id) {
+            console.log(id)
+        }
+
+        // onHandleGetDragList({ dragListId, dragCardId })
+        
+        // should handle global state later
+        document.getElementById(dragCardId).remove()
+
+
+        const lists = _.cloneDeep(initialData.lists)
+        console.log(lists)
+        const dragCard = lists
+            .find(list => list.id == dragListId).cards
+            .find(card => card.id == dragCardId)
+
+        console.log(dragCard)
+
+        dragCard.listId = dropListId
+        console.log(dragCard)
+
+        const droppableCards = _.cloneDeep(boardCards)
+        // console.log(cards, dragCard)
+
+        // insert drag card after dropcard
+        const dropCardIndex = droppableCards.findIndex(card => card.id == dropCardId)
+        droppableCards.splice(dropCardIndex + 1, 0, dragCard)
+
+        console.log(droppableCards)
+        setBoardCards(droppableCards)
+
+
     }
 
 
@@ -192,25 +243,6 @@ function List({ list }) {
         // console.log("Target: ", targetListId)
 
         if (sourceListId && targetListId) {
-            // // console.log(true)
-            // const listOrder = initialData.listOrder
-            // const sourceIdx = listOrder.indexOf(sourceListId)
-            // const targetIdx = listOrder.indexOf(targetListId)
-            // if (sourceIdx < targetIdx) {
-            //     // if drag element from left to right, place source right after target
-            //     listOrder.splice(sourceIdx, 1)
-            //     // targetIdx is now -1
-            //     const newTargetIdx = listOrder.indexOf(targetListId)
-
-            //     listOrder.splice(newTargetIdx + 1, 0, sourceListId)
-            //     // console.log(listOrder)
-            // } else {
-            //     // if drag element from right to left, place source right before target
-            //     listOrder.splice(sourceIdx, 1)
-            //     listOrder.splice(targetIdx, 0, sourceListId)
-            //     // console.log(listOrder)
-            // }
-
             updateOrder(sourceListId, targetListId, initialData.listOrder)
 
             // lift up state to App Component
@@ -278,7 +310,13 @@ function List({ list }) {
                 </div>
 
                 <div className="list-cards">
-                    {boardCards.map((card, index) => <Card key={card.id} card={card} onUpdateCardsSameList={handleUpdateCardsSameList} />)}
+                    {boardCards.map((card, index) => <Card
+                        key={card.id}
+                        card={card}
+                        onUpdateCardsSameList={handleUpdateCardsSameList}
+                        onUpdateCardsBetweenLists={handleUpdateCardsBetweenLists}
+                    // onHandleGetDragList={onHandleGetDragList}
+                    />)}
                 </div>
 
                 {
