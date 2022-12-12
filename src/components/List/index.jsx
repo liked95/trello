@@ -201,7 +201,7 @@ function List({ list }) {
         e.currentTarget.style.pointerEvents = 'auto'
         // reset style
         e.currentTarget.style.transform = "none"
-        e.currentTarget.style.position = 'relative'
+        e.currentTarget.style.position = 'initial'
         e.currentTarget.style.left = 0
         e.currentTarget.style.top = 0
         e.currentTarget.style.zIndex = 0

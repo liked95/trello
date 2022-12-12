@@ -48,6 +48,12 @@ function Card({ card,
         e.dataTransfer.setData("text", currentTarget.id + "&" + listWrapperEl.id);
 
 
+        const cloneCardEl = e.currentTarget.cloneNode(true)
+        cloneCardEl.id = 'clone-card-element'
+        cloneCardEl.style.display = "none"
+        e.currentTarget.after(cloneCardEl)
+
+
         onDragCoordDiff = {
             dx: e.currentTarget.getBoundingClientRect().x - e.clientX,
             dy: e.currentTarget.getBoundingClientRect().y - e.clientY
@@ -62,14 +68,19 @@ function Card({ card,
         const diffY = onDragCoordDiff.dy
 
 
-        const currentTarget = e.currentTarget
-        currentTarget.style.pointerEvents = 'none'
-        currentTarget.style.position = 'fixed'
-        currentTarget.style.width = '256px'
-        currentTarget.style.left = e.clientX + diffX + 'px'
-        currentTarget.style.top = e.clientY + diffY + 'px'
-        currentTarget.style.transform = 'rotate(3deg)'
-        currentTarget.style.zIndex=100
+        
+        e.currentTarget.style.pointerEvents = 'none'
+        e.currentTarget.style.position = 'fixed'
+        e.currentTarget.style.width = '256px'
+        e.currentTarget.style.left = e.clientX + diffX + 'px'
+        e.currentTarget.style.top = e.clientY + diffY + 'px'
+        e.currentTarget.style.transform = 'rotate(3deg)'
+        e.currentTarget.style.zIndex = 2500
+
+        const cloneCardEle = document.getElementById("clone-card-element")
+        cloneCardEle.style.display = "block"
+        cloneCardEle.querySelector("textarea").style.visibility = 'hidden'
+        cloneCardEle.style.backgroundColor = "rgba(0, 0, 0, 0.2)"
 
     }
 
@@ -82,8 +93,12 @@ function Card({ card,
         e.currentTarget.style.left = 0
         e.currentTarget.style.top = 0
         e.currentTarget.style.transform = 'none'
-        e.currentTarget.style.zIndex=0
+        e.currentTarget.style.zIndex = 0
         console.log('drag end', e)
+
+
+        document.getElementById("clone-card-element").remove()
+
     }
 
     const handleOnDrop = e => {
