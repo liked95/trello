@@ -79,6 +79,11 @@ body,
   border-radius: 3px;
   margin-bottom: 8px;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  cursor: pointer;
+}
+
+.list-card-wrapper textarea {
+  cursor: pointer;
 }
 
 .list-card-detail {
@@ -87,7 +92,7 @@ body,
   /* font-size: 14px; */
   width: 100%;
   border: none;
-  resize: vertical;
+  resize: none;
   font-family: -apple-system, system-ui, BlinkMacSystemFont;
 }
 

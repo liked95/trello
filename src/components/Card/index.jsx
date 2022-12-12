@@ -1,23 +1,30 @@
-import { compact } from 'lodash';
+import _ from 'lodash';
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context';
 import { updateCardsBetweenLists, updateCardsSameList } from '../../store/actions';
+import { saveToLocal } from '../../utils';
+
 
 function Card({ card,
     onUpdateCardsSameList,
     onUpdateCardsBetweenLists }) {
-    const { id, content } = card
+    const { id, content, listId } = card
     // console.log(onUpdateCardsSameList);
     const [value, setValue] = useState(content)
 
     const { dispatchList, initialData } = useContext(Context)
 
-    useEffect(() => {
-        setValue(content)
-    }, [card]);
+    // useEffect(() => {
+    //     setValue(content)
+    // }, [card]);
 
     const handleChangeCardContent = (e) => {
         setValue(e.target.value)
+        const data = _.cloneDeep(initialData)
+        const list = data.lists.find(list=>list.id == listId)
+        const card = list.cards.find(card=>card.id == id)
+        card.content = e.target.value
+        saveToLocal("data", data)
     }
 
 
@@ -46,8 +53,6 @@ function Card({ card,
 
     const handleOnDrag = e => {
         e.stopPropagation()
-
-
     }
 
     const handleDragEnd = e => {
@@ -91,6 +96,7 @@ function Card({ card,
 
         } else {
             console.log("Diff col", dragListId, dragCardId, dropListId, dropCardId)
+            
             dispatchList(updateCardsBetweenLists({
                 dragListId,
                 dragCardId,

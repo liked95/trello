@@ -1,4 +1,4 @@
-import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_BETWEEN_LISTS } from "./constants"
+import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_BETWEEN_LISTS, UPDATE_DROP_HEADING, UPDATE_EMPTY_LIST } from "./constants"
 import _ from 'lodash'
 import { deleteFromArr, saveToLocal } from "../utils"
 
@@ -105,11 +105,12 @@ const listReducer = (state, action) => {
 
         case DELETE_LIST: {
             let listId = action.payload
+            console.log(listId)
 
             let listOrderIdx = clonedState.listOrder.indexOf(listId)
             clonedState.listOrder.splice(listOrderIdx, 1)
 
-            let listIdx = clonedState.lists.indexOf(listId)
+            let listIdx = clonedState.lists.findIndex(list => list.id == listId)
             clonedState.lists.splice(listIdx, 1)
 
             const newState = {
@@ -118,6 +119,7 @@ const listReducer = (state, action) => {
                 lists: clonedState.lists
             }
 
+            console.log(newState)
             saveToLocal("data", newState)
             return newState
         }
@@ -180,16 +182,69 @@ const listReducer = (state, action) => {
             // Insert removedCard into DropList
             removedCard.listId = dropListId
             const dropCardIdx = dropList.cards
-            dropList.cards.splice(dropCardIdx+1, 0, removedCard)
+            dropList.cards.splice(dropCardIdx + 1, 0, removedCard)
 
 
             // console.log(dropList)
 
-            let newState = {...clonedState, lists}
+            let newState = { ...clonedState, lists }
 
 
             saveToLocal("data", newState)
-            
+
+            return newState
+        }
+
+        case UPDATE_DROP_HEADING: {
+            console.log(action.payload)
+            const { dropListId, dragCardId, dragListId } = action.payload
+
+            const lists = clonedState.lists
+            const dragList = lists.find(list => list.id == dragListId)
+            // Remove dragCardId from cardOrder 
+            deleteFromArr(dragCardId, dragList.cardOrder)
+            // Remove Card from DragList
+            let dragCardIdx = dragList.cards.findIndex(card => card.id == dragCardId)
+            let removedCard = dragList.cards.splice(dragCardIdx, 1)[0]
+
+
+            // insert into dropListCardOrder
+            const dropList = lists.find(list => list.id == dropListId)
+            dropList.cardOrder.unshift(dragCardId)
+
+            // Insert removedCard into DropList
+            removedCard.listId = dropListId 
+            dropList.cards.unshift(removedCard)
+
+            let newState = {...clonedState, lists}
+            saveToLocal("data", newState)
+            return newState
+        }
+
+
+        case UPDATE_EMPTY_LIST: {
+            const { dropListId, dragCardId, dragListId } = action.payload
+            const lists = clonedState.lists
+            const dragList = lists.find(list => list.id == dragListId)
+            // Remove dragCardId from cardOrder 
+            deleteFromArr(dragCardId, dragList.cardOrder)
+            // Remove Card from DragList
+            let dragCardIdx = dragList.cards.findIndex(card => card.id == dragCardId)
+            let removedCard = dragList.cards.splice(dragCardIdx, 1)[0]
+
+
+            // insert into dropListCardOrder
+            const dropList = lists.find(list => list.id == dropListId)
+            dropList.cardOrder.unshift(dragCardId)
+
+            // Insert removedCard into DropList
+            removedCard.listId = dropListId
+            removedCard.listId = dropListId
+            dropList.cards.unshift(removedCard)
+
+            let newState = {...clonedState, lists}
+            saveToLocal("data", newState)
+
             return newState
         }
 

@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState, useEffect, Component } from 'react'
 import { Context } from '../../context'
-import { addCard, deleteList, updateListOrder } from '../../store/actions'
+import { addCard, deleteList, updateDropHeading, updateEmptyList, updateListOrder } from '../../store/actions'
 import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
@@ -9,13 +9,13 @@ import _ from 'lodash'
 
 
 
-function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
+function List({ list }) {
     // console.log(deleteData)
     const { title, cards, id, cardOrder } = list
     // console.log(list)
 
     const { dispatchList, initialData } = useContext(Context)
-    const data = _.cloneDeep(initialData)
+
 
 
     const [cardValue, setCardValue] = useState("")
@@ -40,8 +40,6 @@ function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
         list.cards = updateCards
         list.cardOrder = cardOrder
         saveToLocal("data", data)
-
-
     }
 
 
@@ -228,14 +226,26 @@ function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
     const handleOnDrop = (e) => {
         e.preventDefault()
 
-        // console.log(e)
 
 
         // handle sorting list ID logic
         const sourceListId = e.dataTransfer.getData("text")
+        console.log(sourceListId)
 
-        // disable card drop on list
-        if (sourceListId.includes('&')) return
+        // if drag card into empty lists
+        if (sourceListId.includes('&')) {
+            
+            if (cards.length == 0) {
+                console.log('dead' , sourceListId)
+                const [dragCardId, dragListId] = sourceListId.split("&")
+
+                dispatchList(updateEmptyList(
+                    {dragCardId, dragListId, dropListId: id}
+                ))
+            }
+
+            return
+        }
 
         const targetListId = e.currentTarget.closest(".list-content").id
 
@@ -244,10 +254,30 @@ function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
 
         if (sourceListId && targetListId) {
             updateOrder(sourceListId, targetListId, initialData.listOrder)
-
+            console.log("here ", sourceListId, targetListId, initialData.listOrder)
             // lift up state to App Component
             dispatchList(updateListOrder(initialData.listOrder))
         }
+    }
+
+    const handleOnDropHeading = e => {
+        if (cards.length == 0) {
+            return
+        }
+
+        const data = e.dataTransfer.getData("text")
+        if (!data.includes('&')) return
+        const listId = e.target.closest(".list-content").id
+        const [dragCardId, dragListId] = data.split("&")
+
+        console.log("drop heading of the page", listId)
+        console.log("drop heading data", data)
+
+        dispatchList(updateDropHeading({
+            dropListId: listId,
+            dragCardId,
+            dragListId,
+        }))
 
     }
 
@@ -302,6 +332,7 @@ function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
                 <div className="list-heading"
                     onMouseDown={handleAddDraggable}
                     onMouseUp={handleRemoveDraggable}
+                    onDrop={handleOnDropHeading}
                 // onMouseMove={handleOnMouseMove}
                 >
                     <h2 className="list-header-name">

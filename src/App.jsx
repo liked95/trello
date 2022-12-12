@@ -51,12 +51,12 @@ function App() {
     <div className="App">
       <div className='dashboard'  >
         <div className='dashboard-columns'>
-          {boardLists.map((list, index) => <List
+          {boardLists.map((list) => <List
             list={list}
             key={list.id}
-            onHandleGetDragList={handleGetDragList}
-            onHandleDeleteDragCard={handleDeleteDragCard}
-            deleteData={deleteData}
+            // onHandleGetDragList={handleGetDragList}
+            // onHandleDeleteDragCard={handleDeleteDragCard}
+            // deleteData={deleteData}
           />)}
         </div>
         <AddList />
