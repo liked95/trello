@@ -21,8 +21,8 @@ function Card({ card,
     const handleChangeCardContent = (e) => {
         setValue(e.target.value)
         const data = _.cloneDeep(initialData)
-        const list = data.lists.find(list=>list.id == listId)
-        const card = list.cards.find(card=>card.id == id)
+        const list = data.lists.find(list => list.id == listId)
+        const card = list.cards.find(card => card.id == id)
         card.content = e.target.value
         saveToLocal("data", data)
     }
@@ -33,30 +33,56 @@ function Card({ card,
 
     // DnD
 
+    var onDragCoordDiff = {}
 
     const handleDragStart = e => {
         e.stopPropagation()
 
-        // var img = new Image();
-        // img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
-        // e.dataTransfer.setDragImage(img, 0, 0);
+        var img = new Image();
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+        e.dataTransfer.setDragImage(img, 0, 0);
+
         const currentTarget = e.currentTarget
         const listWrapperEl = currentTarget.closest(".list-content")
 
         e.dataTransfer.setData("text", currentTarget.id + "&" + listWrapperEl.id);
 
 
-
-
+        onDragCoordDiff = {
+            dx: e.currentTarget.getBoundingClientRect().x - e.clientX,
+            dy: e.currentTarget.getBoundingClientRect().y - e.clientY
+        }
 
     }
 
     const handleOnDrag = e => {
         e.stopPropagation()
+
+        const diffX = onDragCoordDiff.dx
+        const diffY = onDragCoordDiff.dy
+
+
+        const currentTarget = e.currentTarget
+        currentTarget.style.pointerEvents = 'none'
+        currentTarget.style.position = 'fixed'
+        currentTarget.style.width = '256px'
+        currentTarget.style.left = e.clientX + diffX + 'px'
+        currentTarget.style.top = e.clientY + diffY + 'px'
+        currentTarget.style.transform = 'rotate(3deg)'
+        currentTarget.style.zIndex=100
+
     }
 
     const handleDragEnd = e => {
         e.stopPropagation()
+
+        e.currentTarget.style.pointerEvents = 'auto'
+        e.currentTarget.style.position = 'relative'
+        e.currentTarget.style.width = '256px'
+        e.currentTarget.style.left = 0
+        e.currentTarget.style.top = 0
+        e.currentTarget.style.transform = 'none'
+        e.currentTarget.style.zIndex=0
         console.log('drag end', e)
     }
 
@@ -96,7 +122,7 @@ function Card({ card,
 
         } else {
             console.log("Diff col", dragListId, dragCardId, dropListId, dropCardId)
-            
+
             dispatchList(updateCardsBetweenLists({
                 dragListId,
                 dragCardId,

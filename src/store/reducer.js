@@ -155,7 +155,6 @@ const listReducer = (state, action) => {
             // console.log(action.payload)
             let newState = { ...clonedState, listOrder: action.payload }
 
-
             saveToLocal("data", newState)
 
             return newState

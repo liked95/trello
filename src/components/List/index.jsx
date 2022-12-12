@@ -81,8 +81,6 @@ function List({ list }) {
 
         console.log(droppableCards)
         setBoardCards(droppableCards)
-
-
     }
 
 
@@ -116,8 +114,7 @@ function List({ list }) {
         }
 
         dispatchList(addCard(newCard))
-        // const updateCards = _.cloneDeep(cards)
-        // setBoardCards([...updateCards, newCard])
+
         setCardValue("")
     }
 
@@ -136,9 +133,10 @@ function List({ list }) {
     // DnD
 
 
-    const [isMouseDown, setIsMouseDown] = useState(false)
+
     // const [draggable, setDraggable] = useState(false)
     // const [onDragCoordDif, setOnDragCoordDif] = useState({})
+
     var onDragCoordDiff = {}
 
     const handleDragStart = (e) => {
@@ -184,7 +182,7 @@ function List({ list }) {
         sourceEle.style.width = '272px'
         sourceEle.style.left = e.clientX + diffX + 'px'
         sourceEle.style.top = e.clientY + diffY + 'px'
-        sourceEle.style.rotate = "3deg"
+        sourceEle.style.transform = 'rotate(3deg)'
         sourceEle.style.zIndex = 1000
 
         const cloneEle = document.getElementById("clone-element")
@@ -202,7 +200,7 @@ function List({ list }) {
         // allow user to drag again 
         e.currentTarget.style.pointerEvents = 'auto'
         // reset style
-        e.currentTarget.style.rotate = "0deg"
+        e.currentTarget.style.transform = "none"
         e.currentTarget.style.position = 'relative'
         e.currentTarget.style.left = 0
         e.currentTarget.style.top = 0
@@ -234,13 +232,13 @@ function List({ list }) {
 
         // if drag card into empty lists
         if (sourceListId.includes('&')) {
-            
+
             if (cards.length == 0) {
-                console.log('dead' , sourceListId)
+                console.log('dead', sourceListId)
                 const [dragCardId, dragListId] = sourceListId.split("&")
 
                 dispatchList(updateEmptyList(
-                    {dragCardId, dragListId, dropListId: id}
+                    { dragCardId, dragListId, dropListId: id }
                 ))
             }
 
@@ -249,14 +247,12 @@ function List({ list }) {
 
         const targetListId = e.currentTarget.closest(".list-content").id
 
-        // console.log("Source: ", sourceListId)
-        // console.log("Target: ", targetListId)
-
         if (sourceListId && targetListId) {
-            updateOrder(sourceListId, targetListId, initialData.listOrder)
-            console.log("here ", sourceListId, targetListId, initialData.listOrder)
+            const cloneData = _.cloneDeep(initialData)
+            updateOrder(sourceListId, targetListId, cloneData.listOrder)
+            console.log("here ", sourceListId, targetListId, cloneData.listOrder)
             // lift up state to App Component
-            dispatchList(updateListOrder(initialData.listOrder))
+            dispatchList(updateListOrder(cloneData.listOrder))
         }
     }
 
