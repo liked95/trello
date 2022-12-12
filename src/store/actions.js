@@ -1,4 +1,4 @@
-import { ADD_LIST, UPDATE_CARDS_SAME_LIST, UPDATE_LIST_ORDER } from "./constants"
+import { ADD_LIST, UPDATE_CARDS_BETWEEN_LISTS, UPDATE_LIST_ORDER } from "./constants"
 import { DELETE_LIST } from "./constants"
 import { ADD_CARD } from "./constants"
 
@@ -35,9 +35,9 @@ export const updateListOrder = (listOrder) => {
     }
 }
 
-export const updateCardsSameList = (data) => {
+export const updateCardsBetweenLists = (data) => {
     return {
-        type: UPDATE_CARDS_SAME_LIST,
+        type: UPDATE_CARDS_BETWEEN_LISTS,
         payload: data
     }
 }

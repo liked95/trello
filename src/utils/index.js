@@ -36,3 +36,13 @@ export function saveToLocal(key, data) {
 export function getFromLocal(key) {
     return JSON.parse(localStorage.getItem(key))
 }
+
+
+export function deleteFromArr(ele, arr) {
+    if (Array.isArray(arr)) {
+        let index = arr.indexOf(ele)
+        if (index != -1) {
+            arr.splice(index, 1)
+        }
+    }
+}

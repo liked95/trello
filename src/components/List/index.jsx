@@ -58,7 +58,7 @@ function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
         }
 
         // onHandleGetDragList({ dragListId, dragCardId })
-        
+
         // should handle global state later
         document.getElementById(dragCardId).remove()
 
@@ -314,7 +314,7 @@ function List({ list, onHandleGetDragList, onHandleDeleteDragCard }) {
                         key={card.id}
                         card={card}
                         onUpdateCardsSameList={handleUpdateCardsSameList}
-                        onUpdateCardsBetweenLists={handleUpdateCardsBetweenLists}
+                    // onUpdateCardsBetweenLists={handleUpdateCardsBetweenLists}
                     // onHandleGetDragList={onHandleGetDragList}
                     />)}
                 </div>

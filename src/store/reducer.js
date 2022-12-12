@@ -1,6 +1,7 @@
-import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_SAME_LIST } from "./constants"
+import { ADD_CARD, ADD_LIST, DELETE_LIST, UPDATE_LIST_ORDER, UPDATE_CARDS_BETWEEN_LISTS } from "./constants"
 import _ from 'lodash'
-import { saveToLocal } from "../utils"
+import { deleteFromArr, saveToLocal } from "../utils"
+
 export const initialListState = {
     listOrder: ['list-1', 'list-2', 'list-3'],
     lists: [
@@ -154,17 +155,42 @@ const listReducer = (state, action) => {
 
 
             saveToLocal("data", newState)
-            
+
             return newState
         }
 
-        case UPDATE_CARDS_SAME_LIST: {
-            // console.log(action.payload)
-            const { listId, dragCardId, dropListId } = action.payload
+        case UPDATE_CARDS_BETWEEN_LISTS: {
+
+            const { dragListId, dragCardId, dropListId, dropCardId } = action.payload
+            // console.log(dragListId, dragCardId, dropListId, dropCardId)
+            const lists = clonedState.lists
+            const dragList = lists.find(list => list.id == dragListId)
+            // Remove dragCardId from cardOrder 
+            deleteFromArr(dragCardId, dragList.cardOrder)
+            // Remove Card from DragList
+            let dragCardIdx = dragList.cards.findIndex(card => card.id == dragCardId)
+            let removedCard = dragList.cards.splice(dragCardIdx, 1)[0]
+            // console.log(removedCard, dragList)
+
+            // insert into dropListCardOrder
+            const dropList = lists.find(list => list.id == dropListId)
+            const dropCardOrderIdx = dropList.cardOrder.indexOf(dropCardId)
+            dropList.cardOrder.splice(dropCardOrderIdx + 1, 0, dragCardId)
+
+            // Insert removedCard into DropList
+            removedCard.listId = dropListId
+            const dropCardIdx = dropList.cards
+            dropList.cards.splice(dropCardIdx+1, 0, removedCard)
 
 
+            // console.log(dropList)
 
-            return state
+            let newState = {...clonedState, lists}
+
+
+            saveToLocal("data", newState)
+            
+            return newState
         }
 
 
