@@ -5,6 +5,8 @@ import List from './components/List';
 import AddList from './components/AddList';
 import { useContext, useEffect, useState } from 'react';
 import { Context } from './context';
+import axios from 'axios'
+import _ from 'lodash'
 
 
 import { reorder } from './utils';
@@ -19,10 +21,18 @@ function App() {
 
 
   useEffect(() => {
-    let lists = reorder(initialData.lists, initialData.listOrder, 'id')
-    // console.log(initialData.lists)
-    setBoardLists(lists)
-  }, [initialData])
+    const fetchData = async () => {
+      try {
+        let res = await axios.get("http://localhost:5500/api/item")
+        setBoardLists(res.data)
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   // const handleOnChangeListOrder = (newListOrder) => {
   //   // let lists = reorder(initialData.lists, newListOrder, 'id')
@@ -31,19 +41,38 @@ function App() {
   //   // console.log(newListOrder);
   // }
 
-  let deleteData = null
-  // get what dragCardId to delete from dragListId from List component 
-  // and then pass these data to another List
-  const handleGetDragList = (value) => {
-    console.log("value >> ", value)
-    // setDeleteData(value)
-    deleteData = value
-
-    // pass to drag list
+  const handleAddList = async (list) => {
+    console.log(list)
+    try {
+      const res = await axios.post('http://localhost:5500/api/item', list)
+      setBoardLists([...boardLists, res.data])
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  const handleDeleteDragCard = (value) => {
-    console.log("value to delete >> ", value)
+  const handleDeleteList = async (id) => {
+    try {
+      let res = await axios.delete(`http://localhost:5500/api/item/${id}`)
+      let newBoardList = _.cloneDeep(boardLists).filter(list => list._id != id)
+      setBoardLists(newBoardList)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleAddNewCard = async (card) => {
+    try {
+      const cloneBoardLists = _.cloneDeep(boardLists)
+      const list = cloneBoardLists.find(list => list._id == card.listId)
+      list.cards.push(card)
+      list.cardOrder.push(card.id)
+      let res = await axios.put(`http://localhost:5500/api/item/${card.listId}`, list)
+
+      setBoardLists(cloneBoardLists)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -53,14 +82,16 @@ function App() {
         <div className='dashboard-columns'>
           {boardLists.map((list, index) => <List
             list={list}
-            key={list.id}
+            key={list._id}
+            onDeleteList={handleDeleteList}
+            onAddCard={handleAddNewCard}
             // onHandleGetDragList={handleGetDragList}
             // onHandleDeleteDragCard={handleDeleteDragCard}
             // deleteData={deleteData}
-            order={index+1}
+            order={index + 1}
           />)}
         </div>
-        <AddList />
+        <AddList onAddList={handleAddList} />
       </div>
     </div>
 

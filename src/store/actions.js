@@ -1,8 +1,13 @@
-import { ADD_LIST, UPDATE_CARDS_BETWEEN_LISTS, UPDATE_DROP_HEADING, UPDATE_EMPTY_LIST, UPDATE_LIST_ORDER } from "./constants"
+import { ADD_LIST, FETCH_DATA, UPDATE_CARDS_BETWEEN_LISTS, UPDATE_DROP_HEADING, UPDATE_EMPTY_LIST, UPDATE_LIST_ORDER } from "./constants"
 import { DELETE_LIST } from "./constants"
 import { ADD_CARD } from "./constants"
 
-
+export const fetchData = (data) => {
+    return {
+        type: FETCH_DATA,
+        payload: data
+    }
+}
 
 export const addList = (list) => {
     return {

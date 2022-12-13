@@ -4,8 +4,12 @@ export function createListId() {
 
 
 export function reorder(initialArr, order, key) {
-    let newArr = initialArr.sort((a, b) => order.indexOf(a[key]) - order.indexOf(b[key]))
-    return newArr
+    if (Array.isArray(initialArr)) {
+        let newArr = initialArr.sort((a, b) => order.indexOf(a[key]) - order.indexOf(b[key]))
+        return newArr
+    }
+
+    return initialArr
 }
 
 export function updateOrder(source, target, arr) {

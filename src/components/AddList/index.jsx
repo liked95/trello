@@ -4,8 +4,9 @@ import useOnClickOutside from '../../hooks/useOnClickOutside';
 import { Context } from '../../context';
 import { addList } from '../../store/actions';
 import { createListId } from '../../utils';
+import axios from 'axios';
 
-function AddList() {
+function AddList({onAddList}) {
     const [isOpen, setIsOpen] = useState(false)
     const [title, setTitle] = useState("")
     const addListRef = useRef()
@@ -28,13 +29,13 @@ function AddList() {
         if (!title.trim()) return
 
         const newList = {
-            id: 'list-' + createListId(),
             title: title.trim(),
             cards: [],
             cardOrder: [],
         }
 
-        dispatchList(addList(newList))
+        onAddList(newList)
+
         setTitle("")
     }
 

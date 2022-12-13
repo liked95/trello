@@ -9,10 +9,10 @@ import _ from 'lodash'
 
 
 
-function List({ list }) {
+function List({ list, onDeleteList, onAddCard}) {
     // console.log(deleteData)
-    const { title, cards, id, cardOrder } = list
-    // console.log(list)
+    const { title, cards, _id, cardOrder } = list
+    
 
     const { dispatchList, initialData } = useContext(Context)
 
@@ -36,7 +36,7 @@ function List({ list }) {
 
         // save to local without dispatching
         const data = _.cloneDeep(initialData)
-        const list = data.lists.find(list => list.id == id)
+        const list = data.lists.find(list => list.id == _id)
         list.cards = updateCards
         list.cardOrder = cardOrder
         saveToLocal("data", data)
@@ -47,12 +47,12 @@ function List({ list }) {
     // lift up state cards update in the different lists
     const handleUpdateCardsBetweenLists = obj => {
         console.log(obj)
-        console.log(id)
+        console.log(_id)
         const { dragCardId, dragListId, dropCardId, dropListId } = obj
 
         // handle source list
-        if (dragListId == id) {
-            console.log(id)
+        if (dragListId == _id) {
+            console.log(_id)
         }
 
         // onHandleGetDragList({ dragListId, dragCardId })
@@ -92,7 +92,7 @@ function List({ list }) {
     useClickOutsideHandler(addCardPanelRef, () => setIsCardShown(false))
 
     const handleDeleteList = id => {
-        dispatchList(deleteList(id))
+        onDeleteList(id)
     }
 
     const handleShowAddCardControl = () => {
@@ -113,7 +113,7 @@ function List({ list }) {
             content: cardValue.trim()
         }
 
-        dispatchList(addCard(newCard))
+        onAddCard(newCard)
 
         setCardValue("")
     }
@@ -124,7 +124,7 @@ function List({ list }) {
 
     const handleKeyDownCardInput = (e) => {
         if (e.keyCode == 13) {
-            handleAddCard(id)
+            handleAddCard(_id)
         }
     }
 
@@ -238,7 +238,7 @@ function List({ list }) {
                 const [dragCardId, dragListId] = sourceListId.split("&")
 
                 dispatchList(updateEmptyList(
-                    { dragCardId, dragListId, dropListId: id }
+                    { dragCardId, dragListId, dropListId: _id }
                 ))
             }
 
@@ -249,6 +249,7 @@ function List({ list }) {
 
         if (sourceListId && targetListId) {
             const cloneData = _.cloneDeep(initialData)
+            console.log("here") 
             updateOrder(sourceListId, targetListId, cloneData.listOrder)
             console.log("here ", sourceListId, targetListId, cloneData.listOrder)
             // lift up state to App Component
@@ -323,7 +324,7 @@ function List({ list }) {
                 onClick={handleOnClick}
                 onDragOver={handleDragOver}
                 onDrop={handleOnDrop}
-                id={id}
+                id={_id}
             >
                 <div className="list-heading"
                     onMouseDown={handleAddDraggable}
@@ -349,7 +350,7 @@ function List({ list }) {
                 {
                     !isCardShown && <div className="add-card-section">
                         <button className="add-btn" onClick={handleShowAddCardControl}>+ Add a card</button>
-                        <button className="del-btn" onClick={() => handleDeleteList(id)}>Delete</button>
+                        <button className="del-btn" onClick={() => handleDeleteList(_id)}>Delete</button>
                     </div>
                 }
 
@@ -364,7 +365,7 @@ function List({ list }) {
                         </div>
 
                         <div className='second-row'>
-                            <button className="add-list-btn" onClick={() => handleAddCard(id)}>Add card</button>
+                            <button className="add-list-btn" onClick={() => handleAddCard(_id)}>Add card</button>
                             <button className="close-add-list-btn" onClick={handleHideAddCardControl}>
                                 <CloseIcon />
                             </button>
