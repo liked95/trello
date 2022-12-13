@@ -5,6 +5,7 @@ import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
 import { createListId, reorder, saveToLocal, updateOrder } from '../../utils';
+import axios from 'axios'
 import _ from 'lodash'
 
 
@@ -20,28 +21,29 @@ function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameLis
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
-    const [boardCards, setBoardCards] = useState([])
+    const [boardCards, setBoardCards] = useState(cards)
 
-    useEffect(() => {
-        // reorder(cards, cardOrder, 'id')
-        // console.log(cards)
-        setBoardCards(cards)
-    }, [])
+
 
     // lift up state cards update in the same list
 
-    const handleUpdateCardsSameList = (obj) => {
+    const handleUpdateCardsSameList = async (obj) => {
         const clonedList = _.cloneDeep(list)
         const { dragCardId, dropCardId, listId } = obj
 
         // console.log(list.cardOrder)
         updateOrder(dragCardId, dropCardId, clonedList.cardOrder)
         console.log(clonedList.cardOrder)
-        const updateCards = reorder(clonedList.cards, clonedList.cardOrder, 'id')
-        console.log(updateCards)
-        setBoardCards(updateCards)
+        reorder(clonedList.cards, clonedList.cardOrder, 'id')
+        // console.log(updateCards)
+        setBoardCards(clonedList.cards)
 
-        // setBoardLists(cloneBoardLists)
+        try {
+            let res = await axios.put(`http://localhost:5500/api/item/${listId}`, clonedList)
+        } catch (error) {
+            console.log(error)
+        }
+
 
     }
 
