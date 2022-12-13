@@ -36,7 +36,7 @@ POST http://localhost:5500/api/order
 Content-Type: application/json
 
 {
-"order": ["list4", "list5"]
+"order": ["63988d91618437a172171121", "63988d8d618437a17217111f"]
 }
 
 ###
@@ -44,7 +44,11 @@ PUT http://localhost:5500/api/order/63988be98ab3f2970ee2bc26
 
 Content-Type: application/json
 {
-"order": ["updated", "updatedddd"]
+"order": [
+      "63988d91618437a172171121",
+      "63989236618437a1721711bb",
+      "63988d8d618437a17217111f"
+    ]
 }
 
 

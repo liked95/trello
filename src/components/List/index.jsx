@@ -9,10 +9,10 @@ import _ from 'lodash'
 
 
 
-function List({ list, onDeleteList, onAddCard}) {
+function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameList }) {
     // console.log(deleteData)
-    const { title, cards, _id, cardOrder } = list
-    
+    const { title, cards, _id, cardOrder } = _.cloneDeep(list)
+
 
     const { dispatchList, initialData } = useContext(Context)
 
@@ -23,24 +23,43 @@ function List({ list, onDeleteList, onAddCard}) {
     const [boardCards, setBoardCards] = useState([])
 
     useEffect(() => {
-        reorder(cards, cardOrder, 'id')
+        // reorder(cards, cardOrder, 'id')
         // console.log(cards)
         setBoardCards(cards)
-    }, [list])
+    }, [])
 
     // lift up state cards update in the same list
+
     const handleUpdateCardsSameList = (obj) => {
-        updateOrder(obj.dragCardId, obj.dropCardId, cardOrder)
-        const updateCards = reorder(_.cloneDeep(boardCards), cardOrder, 'id')
+        const clonedList = _.cloneDeep(list)
+        const { dragCardId, dropCardId, listId } = obj
+
+        // console.log(list.cardOrder)
+        updateOrder(dragCardId, dropCardId, clonedList.cardOrder)
+        console.log(clonedList.cardOrder)
+        const updateCards = reorder(clonedList.cards, clonedList.cardOrder, 'id')
+        console.log(updateCards)
         setBoardCards(updateCards)
 
-        // save to local without dispatching
-        const data = _.cloneDeep(initialData)
-        const list = data.lists.find(list => list.id == _id)
-        list.cards = updateCards
-        list.cardOrder = cardOrder
-        saveToLocal("data", data)
+        // setBoardLists(cloneBoardLists)
+
     }
+
+
+    // const handleUpdateCardsSameList = (obj) => {
+    //     updateOrder(obj.dragCardId, obj.dropCardId, cardOrder)
+    //     const updateCards = reorder(_.cloneDeep(boardCards), cardOrder, 'id')
+    //     setBoardCards(updateCards)
+
+    //     // save to local without dispatching
+    //     const data = _.cloneDeep(initialData)
+    //     const list = data.lists.find(list => list.id == _id)
+    //     list.cards = updateCards
+    //     list.cardOrder = cardOrder
+    //     saveToLocal("data", data)
+    // }
+
+
 
 
 
@@ -249,11 +268,10 @@ function List({ list, onDeleteList, onAddCard}) {
 
         if (sourceListId && targetListId) {
             const cloneData = _.cloneDeep(initialData)
-            console.log("here") 
-            updateOrder(sourceListId, targetListId, cloneData.listOrder)
-            console.log("here ", sourceListId, targetListId, cloneData.listOrder)
-            // lift up state to App Component
-            dispatchList(updateListOrder(cloneData.listOrder))
+            // console.log("here", sourceListId, targetListId) 
+            onMoveLists({ sourceListId, targetListId })
+            // console.log("here ", sourceListId, targetListId, cloneData.listOrder)
+
         }
     }
 

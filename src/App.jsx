@@ -9,7 +9,7 @@ import axios from 'axios'
 import _ from 'lodash'
 
 
-import { reorder } from './utils';
+import { reorder, updateOrder } from './utils';
 
 
 
@@ -24,6 +24,13 @@ function App() {
     const fetchData = async () => {
       try {
         let res = await axios.get("http://localhost:5500/api/item")
+        let order = await axios.get("http://localhost:5500/api/order")
+
+        if (order.data.length > 0) {
+          const listOrder = order.data[0].order
+          reorder(res.data, listOrder, "_id")
+        }
+
         setBoardLists(res.data)
 
       } catch (error) {
@@ -45,6 +52,22 @@ function App() {
     console.log(list)
     try {
       const res = await axios.post('http://localhost:5500/api/item', list)
+      let order = await axios.get("http://localhost:5500/api/order")
+
+      if (order.data.length > 0) {
+        const listOrder = order.data[0].order
+        const orderId = order.data[0]._id
+
+        let orderRes = await axios.put(`http://localhost:5500/api/order/${orderId}`, {
+          order: [...listOrder, res.data._id]
+        })
+      } else {
+        let orderRes = await axios.post(`http://localhost:5500/api/order/`, {
+          order: [res.data._id]
+        })
+      }
+
+
       setBoardLists([...boardLists, res.data])
     } catch (error) {
       console.log(error)
@@ -53,8 +76,20 @@ function App() {
 
   const handleDeleteList = async (id) => {
     try {
-      let res = await axios.delete(`http://localhost:5500/api/item/${id}`)
+      let listRes = await axios.delete(`http://localhost:5500/api/item/${id}`)
       let newBoardList = _.cloneDeep(boardLists).filter(list => list._id != id)
+
+      const deletedListId = listRes.data._id
+      let order = await axios.get("http://localhost:5500/api/order")
+      const listOrder = order.data[0].order
+      const orderId = order.data[0]._id
+      const idx = listOrder.indexOf(deletedListId)
+      listOrder.splice(idx, 1)
+
+      let orderRes = await axios.put(`http://localhost:5500/api/order/${orderId}`, {
+        order: listOrder
+      })
+
       setBoardLists(newBoardList)
     } catch (error) {
       console.log(error)
@@ -75,6 +110,28 @@ function App() {
     }
   }
 
+  const handleMoveLists = async (data) => {
+    const { sourceListId, targetListId } = data
+    let order = await axios.get("http://localhost:5500/api/order")
+    const listOrder = order.data[0].order
+    const orderId = order.data[0]._id
+
+
+
+    updateOrder(sourceListId, targetListId, listOrder)
+
+
+    const cloneBoardLists = _.cloneDeep(boardLists)
+    reorder(cloneBoardLists, listOrder, "_id")
+    setBoardLists(cloneBoardLists)
+
+    let orderRes = await axios.put(`http://localhost:5500/api/order/${orderId}`, {
+      order: listOrder
+    })
+  }
+
+
+
 
   return (
     <div className="App">
@@ -85,6 +142,8 @@ function App() {
             key={list._id}
             onDeleteList={handleDeleteList}
             onAddCard={handleAddNewCard}
+            onMoveLists={handleMoveLists}
+           
             // onHandleGetDragList={handleGetDragList}
             // onHandleDeleteDragCard={handleDeleteDragCard}
             // deleteData={deleteData}

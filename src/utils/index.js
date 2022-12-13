@@ -5,6 +5,7 @@ export function createListId() {
 
 export function reorder(initialArr, order, key) {
     if (Array.isArray(initialArr)) {
+        console.log("is array")
         let newArr = initialArr.sort((a, b) => order.indexOf(a[key]) - order.indexOf(b[key]))
         return newArr
     }

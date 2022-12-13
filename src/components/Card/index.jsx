@@ -121,13 +121,7 @@ function Card({ card,
         // if card is dnd within the same list
         if (dragListId == dropListId) {
             console.log("Same col")
-
-            // dispatchList(updateCardsSameList({
-            //     listId: dropListId,
-            //     dragCardId,
-            //     dropCardId
-            // }))
-
+            
             // lift up state back to List component
             onUpdateCardsSameList({
                 listId: dropListId,
