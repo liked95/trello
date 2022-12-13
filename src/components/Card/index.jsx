@@ -159,6 +159,17 @@ function Card({ card,
 
     }
 
+    const handleOnDragEnter = e => {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+
+    const handleOnDragLeave = e => {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
 
 
     ////////////////////////////////////////
@@ -182,6 +193,8 @@ function Card({ card,
             // onClick={handleOnClick}
             // onDragOver={handleDragOver}
             onDrop={handleOnDrop}
+            // onDragEnter={handleOnDragEnter}
+            // onDragLeave={handleOnDragLeave}
             onMouseDown={handleAddDraggable}
             onMouseUp={handleRemoveDraggable}
 

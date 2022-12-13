@@ -51,12 +51,13 @@ function App() {
     <div className="App">
       <div className='dashboard'  >
         <div className='dashboard-columns'>
-          {boardLists.map((list) => <List
+          {boardLists.map((list, index) => <List
             list={list}
             key={list.id}
             // onHandleGetDragList={handleGetDragList}
             // onHandleDeleteDragCard={handleDeleteDragCard}
             // deleteData={deleteData}
+            order={index+1}
           />)}
         </div>
         <AddList />
