@@ -6,12 +6,16 @@ import { saveToLocal } from '../../utils';
 import useDebounce from '../../hooks/useDebounce';
 
 
-function Card({ card,
+function Card({
+    card,
+
     onUpdateCardsSameList,
     onHandleMoveCardsBetweenLists }) {
     const { id, content, listId } = card
 
     const [value, setValue] = useState(content)
+    const [readOnly, setReadOnly] = useState(true)
+
     const debouncedValue = useDebounce(value, 1000)
 
 
@@ -20,12 +24,52 @@ function Card({ card,
         setValue(e.target.value)
     }
 
+    const handleOnFocus = e => {
+        console.log("focus")
+        e.target.selectionStart = e.target.selectionEnd = e.target.value.length;
+    }
 
-    useEffect(() => {
-        console.log(debouncedValue)
-    }, [debouncedValue])
+    const handleOnBlur = async (e) => {
+        setReadOnly(true)
+        try {
+            const res = await axios.get(`http://localhost:5500/api/item/${listId}`)
+            const list = res.data
+            console.log("Api call", list)
+            list.cards = list.cards.map(card => {
+                if (card.id == id) {
+                    card.content = value
+                    return card
+                }
+
+                return card
+            })
+
+            axios.put(`http://localhost:5500/api/item/${listId}`, list)
+
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    const handleKeyDown = e => {
+        if (e.keyCode == 13) {
+            // console.log("Enter is hit")
+            e.target.blur()
+        }
+    }
+
+    const handleDoubleClick = e => {
+        console.log("Double click")
+        setReadOnly(false)
+        e.target.focus()
+    }
 
 
+    // prevent focus onClick
+    const handleMouseDown = e => {
+        // e.preventDefault()
+    }
 
 
 
@@ -182,7 +226,16 @@ function Card({ card,
             onMouseUp={handleRemoveDraggable}
 
         >
-            <textarea className="list-card-detail" value={value} onChange={handleChangeCardContent} />
+            <textarea className="list-card-detail"
+                value={value}
+                onChange={handleChangeCardContent}
+                onFocus={handleOnFocus}
+                onBlur={handleOnBlur}
+                onKeyDown={handleKeyDown}
+                onDoubleClick={handleDoubleClick}
+                onMouseDown={handleMouseDown}
+                readOnly={readOnly}
+            />
         </div>
     )
 }

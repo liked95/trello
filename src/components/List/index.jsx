@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect, memo} from 'react'
+import React, { useContext, useRef, useState, useEffect, memo } from 'react'
 import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
@@ -19,7 +19,7 @@ function List({
 }) {
     // console.log(deleteData)
     const { title, cards, _id, cardOrder } = list
-    
+
 
 
     const [cardValue, setCardValue] = useState("")
@@ -46,6 +46,7 @@ function List({
         cloneList.cardOrder = cardOrder
 
 
+
         try {
             let res = await axios.put(`http://localhost:5500/api/item/${obj.listId}`, cloneList)
         } catch (error) {
@@ -62,7 +63,7 @@ function List({
     const addCardPanelRef = useRef()
 
     useClickOutsideHandler(addCardPanelRef, () => setIsCardShown(false))
-   
+
 
     const handleAddCard = (listId) => {
         if (!cardValue.trim()) return
@@ -310,6 +311,7 @@ function List({
 
                 <div className="list-cards">
                     {boardCards.map((card, index) => <Card
+                        
                         key={card.id}
                         card={card}
                         onUpdateCardsSameList={handleUpdateCardsSameList}
