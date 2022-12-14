@@ -240,10 +240,6 @@ function App() {
             onHandleMoveCardsBetweenLists={handleMoveCardsBetweenLists}
             onDropOnHeading={handleDropCardOnHeading}
             onDropEmptyList={handleDropCardOnHeading}
-            // onHandleGetDragList={handleGetDragList}
-            // onHandleDeleteDragCard={handleDeleteDragCard}
-            // deleteData={deleteData}
-            order={index + 1}
           />)}
         </div>
         <AddList onAddList={handleAddList} />

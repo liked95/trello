@@ -21,10 +21,21 @@ router.post('/api/item', async (req, res) => {
 })
 
 
-router.get('/api/item', async (red, res) => {
+router.get('/api/item', async (req, res) => {
     try {
         const allTodoItems = await todoItemsModel.find({})
         res.status(200).json(allTodoItems)
+    } catch (error) {
+        res.json(error)
+    }
+})
+
+
+// find by Id
+router.get('/api/item/:id', async (req, res) => {
+    try {
+        const item = await todoItemsModel.findById(req.params.id)
+        res.status(200).json(item)
     } catch (error) {
         res.json(error)
     }

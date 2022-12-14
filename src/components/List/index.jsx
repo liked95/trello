@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect, Component } from 'react'
+import React, { useContext, useRef, useState, useEffect, memo} from 'react'
 import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
@@ -19,7 +19,7 @@ function List({
 }) {
     // console.log(deleteData)
     const { title, cards, _id, cardOrder } = list
-    
+
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
@@ -61,20 +61,7 @@ function List({
     const addCardPanelRef = useRef()
 
     useClickOutsideHandler(addCardPanelRef, () => setIsCardShown(false))
-
-    const handleDeleteList = id => {
-        if (window.confirm('Sure to delete this list?'))
-        onDeleteList(id)
-    }
-
-    const handleShowAddCardControl = () => {
-        setIsCardShown(true)
-
-        if (cardInputRef.current) {
-            cardInputRef.current.focus()
-        }
-    }
-
+   
 
     const handleAddCard = (listId) => {
         if (!cardValue.trim()) return
@@ -89,6 +76,22 @@ function List({
 
         setCardValue("")
     }
+
+    const handleDeleteList = id => {
+        if (window.confirm('Sure to delete this list?'))
+            onDeleteList(id)
+    }
+
+    const handleShowAddCardControl = () => {
+        setIsCardShown(true)
+
+        if (cardInputRef.current) {
+            cardInputRef.current.focus()
+        }
+    }
+
+
+
 
     const handleHideAddCardControl = () => {
         setIsCardShown(false)
