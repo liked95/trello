@@ -15,14 +15,13 @@ function List({
     onDeleteList,
     onAddCard,
     onMoveLists,
-    onHandleMoveCardsBetweenLists
+    onHandleMoveCardsBetweenLists,
+    onDropOnHeading,
+    onDropEmptyList
 }) {
     // console.log(deleteData)
     const { title, cards, _id, cardOrder } = list
     const { dispatchList } = useContext(Context)
-
-
-    console.log("clone  >>>", list)
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
@@ -56,61 +55,6 @@ function List({
     }
 
 
-    // const handleUpdateCardsSameList = (obj) => {
-    //     updateOrder(obj.dragCardId, obj.dropCardId, cardOrder)
-    //     const updateCards = reorder(_.cloneDeep(boardCards), cardOrder, 'id')
-    //     setBoardCards(updateCards)
-
-    //     // save to local without dispatching
-    //     const data = _.cloneDeep(initialData)
-    //     const list = data.lists.find(list => list.id == _id)
-    //     list.cards = updateCards
-    //     list.cardOrder = cardOrder
-    //     saveToLocal("data", data)
-    // }
-
-
-
-
-
-    // lift up state cards update in the different lists
-    const handleUpdateCardsBetweenLists = obj => {
-        // console.log(obj)
-        // console.log(_id)
-        // const { dragCardId, dragListId, dropCardId, dropListId } = obj
-
-        // // handle source list
-        // if (dragListId == _id) {
-        //     console.log(_id)
-        // }
-
-        // // onHandleGetDragList({ dragListId, dragCardId })
-
-        // // should handle global state later
-        // document.getElementById(dragCardId).remove()
-
-
-        // const lists = _.cloneDeep(initialData.lists)
-        // console.log(lists)
-        // const dragCard = lists
-        //     .find(list => list.id == dragListId).cards
-        //     .find(card => card.id == dragCardId)
-
-        // console.log(dragCard)
-
-        // dragCard.listId = dropListId
-        // console.log(dragCard)
-
-        // const droppableCards = _.cloneDeep(boardCards)
-        // // console.log(cards, dragCard)
-
-        // // insert drag card after dropcard
-        // const dropCardIndex = droppableCards.findIndex(card => card.id == dropCardId)
-        // droppableCards.splice(dropCardIndex + 1, 0, dragCard)
-
-        // console.log(droppableCards)
-        // setBoardCards(droppableCards)
-    }
 
 
     const cardInputRef = useRef()
@@ -121,6 +65,7 @@ function List({
     useClickOutsideHandler(addCardPanelRef, () => setIsCardShown(false))
 
     const handleDeleteList = id => {
+        if (window.confirm('Sure to delete this list?'))
         onDeleteList(id)
     }
 
@@ -161,10 +106,6 @@ function List({
 
     // DnD
 
-
-
-    // const [draggable, setDraggable] = useState(false)
-    // const [onDragCoordDif, setOnDragCoordDif] = useState({})
 
     var onDragCoordDiff = {}
 
@@ -266,9 +207,7 @@ function List({
                 console.log('dead', sourceListId)
                 const [dragCardId, dragListId] = sourceListId.split("&")
 
-                dispatchList(updateEmptyList(
-                    { dragCardId, dragListId, dropListId: _id }
-                ))
+                onDropEmptyList({ dragCardId, dragListId, dropListId: _id })
             }
 
             return
@@ -290,18 +229,21 @@ function List({
         }
 
         const data = e.dataTransfer.getData("text")
+
         if (!data.includes('&')) return
         const listId = e.target.closest(".list-content").id
         const [dragCardId, dragListId] = data.split("&")
 
-        console.log("drop heading of the page", listId)
-        console.log("drop heading data", data)
+        // console.log({dropListId: listId,
+        //     dragCardId,
+        //     dragListId,})
 
-        dispatchList(updateDropHeading({
+
+        onDropOnHeading({
             dropListId: listId,
             dragCardId,
             dragListId,
-        }))
+        })
 
     }
 

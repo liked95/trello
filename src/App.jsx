@@ -9,7 +9,7 @@ import axios from 'axios'
 import _ from 'lodash'
 
 
-import { reorder, updateOrder } from './utils';
+import { deleteFromArr, reorder, updateOrder } from './utils';
 
 
 
@@ -131,8 +131,99 @@ function App() {
   }
 
   const handleMoveCardsBetweenLists = async (data) => {
-    
+    const { dragListId, dragCardId, dropListId, dropCardId } = data
+    console.log(dragListId, dragCardId, dropListId, dropCardId)
+    const updateLists = _.cloneDeep(boardLists)
+    console.log(updateLists)
+
+    let dragList = updateLists.find(list => list._id == dragListId)
+    deleteFromArr(dragCardId, dragList.cardOrder)
+    // Remove Card from DragList
+    let dragCardIdx = dragList.cards.findIndex(card => card.id == dragCardId)
+    let removedCard = dragList.cards.splice(dragCardIdx, 1)[0]
+
+    // insert into dropListCardOrder
+    const dropList = updateLists.find(list => list._id == dropListId)
+    const dropCardOrderIdx = dropList.cardOrder.indexOf(dropCardId)
+    dropList.cardOrder.splice(dropCardOrderIdx + 1, 0, dragCardId)
+
+    // Insert removedCard into DropList
+    removedCard.listId = dropListId
+    const dropCardIdx = dropList.cards.findIndex(card => card.id == dropCardId)
+    dropList.cards.splice(dropCardIdx + 1, 0, removedCard)
+
+    setBoardLists(updateLists)
+
+    try {
+      await axios.put(`http://localhost:5500/api/item/${dragListId}`, dragList)
+      await axios.put(`http://localhost:5500/api/item/${dropListId}`, dropList)
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+  const handleDropCardOnHeading = async (data) => {
+
+    const { dragListId, dragCardId, dropListId } = data
+    if (dragListId == dropListId) return
+
+    const updateLists = _.cloneDeep(boardLists)
+
+
+    let dragList = updateLists.find(list => list._id == dragListId)
+    deleteFromArr(dragCardId, dragList.cardOrder)
+    // Remove Card from DragList
+    let dragCardIdx = dragList.cards.findIndex(card => card.id == dragCardId)
+    let removedCard = dragList.cards.splice(dragCardIdx, 1)[0]
+
+    // insert into dropListCardOrder
+    const dropList = updateLists.find(list => list._id == dropListId)
+    dropList.cardOrder.unshift(dragCardId)
+
+    // Insert removedCard into DropList
+    removedCard.listId = dropListId
+    dropList.cards.unshift(removedCard)
+
+    setBoardLists(updateLists)
+
+    try {
+      await axios.put(`http://localhost:5500/api/item/${dragListId}`, dragList)
+      await axios.put(`http://localhost:5500/api/item/${dropListId}`, dropList)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // const handleDropIntoEmptyList = async (data) => {
+  //   const { dragListId, dragCardId, dropListId } = data
+  //   if (dragListId == dropListId) return
+
+  //   const updateLists = _.cloneDeep(boardLists)
+
+
+  //   let dragList = updateLists.find(list => list._id == dragListId)
+  //   deleteFromArr(dragCardId, dragList.cardOrder)
+  //   // Remove Card from DragList
+  //   let dragCardIdx = dragList.cards.findIndex(card => card.id == dragCardId)
+  //   let removedCard = dragList.cards.splice(dragCardIdx, 1)[0]
+
+  //   // insert into dropListCardOrder
+  //   const dropList = updateLists.find(list => list._id == dropListId)
+  //   dropList.cardOrder.unshift(dragCardId)
+
+  //   // Insert removedCard into DropList
+  //   removedCard.listId = dropListId
+  //   dropList.cards.unshift(removedCard)
+
+  //   setBoardLists(updateLists)
+
+  //   try {
+  //     await axios.put(`http://localhost:5500/api/item/${dragListId}`, dragList)
+  //     await axios.put(`http://localhost:5500/api/item/${dropListId}`, dropList)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
 
 
@@ -148,7 +239,8 @@ function App() {
             onAddCard={handleAddNewCard}
             onMoveLists={handleMoveLists}
             onHandleMoveCardsBetweenLists={handleMoveCardsBetweenLists}
-
+            onDropOnHeading={handleDropCardOnHeading}
+            onDropEmptyList={handleDropCardOnHeading}
             // onHandleGetDragList={handleGetDragList}
             // onHandleDeleteDragCard={handleDeleteDragCard}
             // deleteData={deleteData}

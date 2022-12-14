@@ -1,3 +1,4 @@
+import axios from 'axios';
 import _ from 'lodash';
 import React, { useState, useEffect, useContext } from 'react'
 import { Context } from '../../context';
@@ -20,11 +21,8 @@ function Card({ card,
 
     const handleChangeCardContent = (e) => {
         setValue(e.target.value)
-        const data = _.cloneDeep(initialData)
-        const list = data.lists.find(list => list.id == listId)
-        const card = list.cards.find(card => card.id == id)
-        card.content = e.target.value
-        saveToLocal("data", data)
+
+        
     }
 
 
@@ -94,7 +92,7 @@ function Card({ card,
         e.currentTarget.style.top = 0
         e.currentTarget.style.transform = 'none'
         e.currentTarget.style.zIndex = 0
-        
+
 
 
         document.getElementById("clone-card-element").remove()
