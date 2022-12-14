@@ -77,6 +77,7 @@ function App() {
     try {
       let listRes = await axios.delete(`http://localhost:5500/api/item/${id}`)
       let newBoardList = _.cloneDeep(boardLists).filter(list => list._id != id)
+      setBoardLists(newBoardList)
 
       const deletedListId = listRes.data._id
       let order = await axios.get("http://localhost:5500/api/order")
@@ -89,7 +90,6 @@ function App() {
         order: listOrder
       })
 
-      setBoardLists(newBoardList)
     } catch (error) {
       console.log(error)
     }
@@ -101,9 +101,9 @@ function App() {
       const list = cloneBoardLists.find(list => list._id == card.listId)
       list.cards.push(card)
       list.cardOrder.push(card.id)
+      setBoardLists(cloneBoardLists)
       let res = await axios.put(`http://localhost:5500/api/item/${card.listId}`, list)
 
-      setBoardLists(cloneBoardLists)
     } catch (error) {
       console.log(error)
     }

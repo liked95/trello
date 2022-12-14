@@ -1,7 +1,9 @@
 import axios from 'axios';
 import _ from 'lodash';
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { fetchList } from '../../api';
 import { saveToLocal } from '../../utils';
+import useDebounce from '../../hooks/useDebounce';
 
 
 function Card({ card,
@@ -10,11 +12,20 @@ function Card({ card,
     const { id, content, listId } = card
 
     const [value, setValue] = useState(content)
+    const debouncedValue = useDebounce(value, 1000)
+
 
 
     const handleChangeCardContent = (e) => {
-        setValue(e.target.value)        
+        setValue(e.target.value)
     }
+
+
+    useEffect(() => {
+        console.log(debouncedValue)
+    }, [debouncedValue])
+
+
 
 
 

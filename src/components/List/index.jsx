@@ -19,6 +19,7 @@ function List({
 }) {
     // console.log(deleteData)
     const { title, cards, _id, cardOrder } = list
+    
 
 
     const [cardValue, setCardValue] = useState("")
@@ -350,4 +351,10 @@ function List({
     )
 }
 
-export default List 
+
+export default List
+// export const MemoList = memo(List, arePropsEqual)
+
+// function arePropsEqual(prevProps, nextProps) {
+//     return prevProps.list == nextProps.list
+// }
