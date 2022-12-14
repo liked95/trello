@@ -10,41 +10,49 @@ import _ from 'lodash'
 
 
 
-function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameList }) {
+function List({
+    list,
+    onDeleteList,
+    onAddCard,
+    onMoveLists,
+    onHandleMoveCardsBetweenLists
+}) {
     // console.log(deleteData)
-    const { title, cards, _id, cardOrder } = _.cloneDeep(list)
+    const { title, cards, _id, cardOrder } = list
+    const { dispatchList } = useContext(Context)
 
 
-    const { dispatchList, initialData } = useContext(Context)
-
-
+    console.log("clone  >>>", list)
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)
-    const [boardCards, setBoardCards] = useState(cards)
+    const [boardCards, setBoardCards] = useState([])
+
+    useEffect(() => {
+        reorder(cards, cardOrder, 'id')
+        // console.log(cards)
+        setBoardCards(cards)
+    }, [list])
 
 
 
     // lift up state cards update in the same list
 
     const handleUpdateCardsSameList = async (obj) => {
-        const clonedList = _.cloneDeep(list)
-        const { dragCardId, dropCardId, listId } = obj
+        const cloneBoardCards = _.cloneDeep(boardCards)
+        updateOrder(obj.dragCardId, obj.dropCardId, cardOrder)
+        const updateCards = reorder(cloneBoardCards, cardOrder, 'id')
+        setBoardCards(updateCards)
 
-        // console.log(list.cardOrder)
-        updateOrder(dragCardId, dropCardId, clonedList.cardOrder)
-        console.log(clonedList.cardOrder)
-        reorder(clonedList.cards, clonedList.cardOrder, 'id')
-        // console.log(updateCards)
-        setBoardCards(clonedList.cards)
+        const cloneList = _.cloneDeep(list)
+        cloneList.cardOrder = cardOrder
+
 
         try {
-            let res = await axios.put(`http://localhost:5500/api/item/${listId}`, clonedList)
+            let res = await axios.put(`http://localhost:5500/api/item/${obj.listId}`, cloneList)
         } catch (error) {
             console.log(error)
         }
-
-
     }
 
 
@@ -67,41 +75,41 @@ function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameLis
 
     // lift up state cards update in the different lists
     const handleUpdateCardsBetweenLists = obj => {
-        console.log(obj)
-        console.log(_id)
-        const { dragCardId, dragListId, dropCardId, dropListId } = obj
+        // console.log(obj)
+        // console.log(_id)
+        // const { dragCardId, dragListId, dropCardId, dropListId } = obj
 
-        // handle source list
-        if (dragListId == _id) {
-            console.log(_id)
-        }
+        // // handle source list
+        // if (dragListId == _id) {
+        //     console.log(_id)
+        // }
 
-        // onHandleGetDragList({ dragListId, dragCardId })
+        // // onHandleGetDragList({ dragListId, dragCardId })
 
-        // should handle global state later
-        document.getElementById(dragCardId).remove()
+        // // should handle global state later
+        // document.getElementById(dragCardId).remove()
 
 
-        const lists = _.cloneDeep(initialData.lists)
-        console.log(lists)
-        const dragCard = lists
-            .find(list => list.id == dragListId).cards
-            .find(card => card.id == dragCardId)
+        // const lists = _.cloneDeep(initialData.lists)
+        // console.log(lists)
+        // const dragCard = lists
+        //     .find(list => list.id == dragListId).cards
+        //     .find(card => card.id == dragCardId)
 
-        console.log(dragCard)
+        // console.log(dragCard)
 
-        dragCard.listId = dropListId
-        console.log(dragCard)
+        // dragCard.listId = dropListId
+        // console.log(dragCard)
 
-        const droppableCards = _.cloneDeep(boardCards)
-        // console.log(cards, dragCard)
+        // const droppableCards = _.cloneDeep(boardCards)
+        // // console.log(cards, dragCard)
 
-        // insert drag card after dropcard
-        const dropCardIndex = droppableCards.findIndex(card => card.id == dropCardId)
-        droppableCards.splice(dropCardIndex + 1, 0, dragCard)
+        // // insert drag card after dropcard
+        // const dropCardIndex = droppableCards.findIndex(card => card.id == dropCardId)
+        // droppableCards.splice(dropCardIndex + 1, 0, dragCard)
 
-        console.log(droppableCards)
-        setBoardCards(droppableCards)
+        // console.log(droppableCards)
+        // setBoardCards(droppableCards)
     }
 
 
@@ -249,7 +257,7 @@ function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameLis
 
         // handle sorting list ID logic
         const sourceListId = e.dataTransfer.getData("text")
-        console.log(sourceListId)
+        // console.log(sourceListId)
 
         // if drag card into empty lists
         if (sourceListId.includes('&')) {
@@ -269,8 +277,7 @@ function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameLis
         const targetListId = e.currentTarget.closest(".list-content").id
 
         if (sourceListId && targetListId) {
-            const cloneData = _.cloneDeep(initialData)
-            // console.log("here", sourceListId, targetListId) 
+            // console.log("on move List", sourceListId, targetListId) 
             onMoveLists({ sourceListId, targetListId })
             // console.log("here ", sourceListId, targetListId, cloneData.listOrder)
 
@@ -362,6 +369,8 @@ function List({ list, onDeleteList, onAddCard, onMoveLists, onUpdateCardsSameLis
                         key={card.id}
                         card={card}
                         onUpdateCardsSameList={handleUpdateCardsSameList}
+                        onHandleMoveCardsBetweenLists={onHandleMoveCardsBetweenLists}
+
                     // onUpdateCardsBetweenLists={handleUpdateCardsBetweenLists}
                     // onHandleGetDragList={onHandleGetDragList}
                     />)}

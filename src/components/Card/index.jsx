@@ -7,7 +7,7 @@ import { saveToLocal } from '../../utils';
 
 function Card({ card,
     onUpdateCardsSameList,
-    onUpdateCardsBetweenLists }) {
+    onHandleMoveCardsBetweenLists }) {
     const { id, content, listId } = card
     // console.log(onUpdateCardsSameList);
     const [value, setValue] = useState(content)
@@ -68,7 +68,7 @@ function Card({ card,
         const diffY = onDragCoordDiff.dy
 
 
-        
+
         e.currentTarget.style.pointerEvents = 'none'
         e.currentTarget.style.position = 'fixed'
         e.currentTarget.style.width = '256px'
@@ -94,7 +94,7 @@ function Card({ card,
         e.currentTarget.style.top = 0
         e.currentTarget.style.transform = 'none'
         e.currentTarget.style.zIndex = 0
-        console.log('drag end', e)
+        
 
 
         document.getElementById("clone-card-element").remove()
@@ -120,8 +120,8 @@ function Card({ card,
 
         // if card is dnd within the same list
         if (dragListId == dropListId) {
-            console.log("Same col")
-            
+            // console.log("Same col")
+
             // lift up state back to List component
             onUpdateCardsSameList({
                 listId: dropListId,
@@ -130,26 +130,15 @@ function Card({ card,
             })
 
         } else {
-            console.log("Diff col", dragListId, dragCardId, dropListId, dropCardId)
+            // console.log("Diff col", dragListId, dragCardId, dropListId, dropCardId)
 
-            dispatchList(updateCardsBetweenLists({
+            onHandleMoveCardsBetweenLists({
                 dragListId,
                 dragCardId,
                 dropListId,
                 dropCardId,
-            }))
-
-            //   onUpdateCardsBetweenLists({
-            //     dragListId,
-            //     dragCardId,
-            //     dropListId,
-            //     dropCardId,
-            //   })
-
-
+            })
         }
-
-        // const targetListId = e.currentTarget.closest(".list-content").id
 
     }
 

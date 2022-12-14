@@ -130,6 +130,10 @@ function App() {
     })
   }
 
+  const handleMoveCardsBetweenLists = async (data) => {
+    
+  }
+
 
 
 
@@ -143,7 +147,8 @@ function App() {
             onDeleteList={handleDeleteList}
             onAddCard={handleAddNewCard}
             onMoveLists={handleMoveLists}
-           
+            onHandleMoveCardsBetweenLists={handleMoveCardsBetweenLists}
+
             // onHandleGetDragList={handleGetDragList}
             // onHandleDeleteDragCard={handleDeleteDragCard}
             // deleteData={deleteData}
