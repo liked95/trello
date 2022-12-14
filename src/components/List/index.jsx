@@ -1,6 +1,4 @@
 import React, { useContext, useRef, useState, useEffect, Component } from 'react'
-import { Context } from '../../context'
-import { addCard, deleteList, updateDropHeading, updateEmptyList, updateListOrder } from '../../store/actions'
 import Card from '../Card'
 import CloseIcon from '@mui/icons-material/Close';
 import useClickOutsideHandler from '../../hooks/useOnClickOutside';
@@ -21,7 +19,7 @@ function List({
 }) {
     // console.log(deleteData)
     const { title, cards, _id, cardOrder } = list
-    const { dispatchList } = useContext(Context)
+    
 
     const [cardValue, setCardValue] = useState("")
     const [isCardShown, setIsCardShown] = useState(false)

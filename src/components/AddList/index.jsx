@@ -1,8 +1,6 @@
 import React, { useState, useRef, useContext } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import useOnClickOutside from '../../hooks/useOnClickOutside';
-import { Context } from '../../context';
-import { addList } from '../../store/actions';
 import { createListId } from '../../utils';
 import axios from 'axios';
 
@@ -10,9 +8,6 @@ function AddList({onAddList}) {
     const [isOpen, setIsOpen] = useState(false)
     const [title, setTitle] = useState("")
     const addListRef = useRef()
-
-    const { lists, dispatchList } = useContext(Context)
-    // console.log(lists);
 
 
     useOnClickOutside(addListRef, () => setIsOpen(false))

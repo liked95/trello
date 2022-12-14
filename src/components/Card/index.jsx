@@ -1,8 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, { useState, useEffect, useContext } from 'react'
-import { Context } from '../../context';
-import { updateCardsBetweenLists, updateCardsSameList } from '../../store/actions';
 import { saveToLocal } from '../../utils';
 
 
@@ -10,19 +8,12 @@ function Card({ card,
     onUpdateCardsSameList,
     onHandleMoveCardsBetweenLists }) {
     const { id, content, listId } = card
-    // console.log(onUpdateCardsSameList);
+
     const [value, setValue] = useState(content)
 
-    const { dispatchList, initialData } = useContext(Context)
-
-    // useEffect(() => {
-    //     setValue(content)
-    // }, [card]);
 
     const handleChangeCardContent = (e) => {
-        setValue(e.target.value)
-
-        
+        setValue(e.target.value)        
     }
 
 

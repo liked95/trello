@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import List from './components/List';
 import AddList from './components/AddList';
 import { useContext, useEffect, useState } from 'react';
-import { Context } from './context';
 import axios from 'axios'
 import _ from 'lodash'
 
@@ -14,7 +13,7 @@ import { deleteFromArr, reorder, updateOrder } from './utils';
 
 
 function App() {
-  const { initialData } = useContext(Context)
+
 
   // console.log(initialData)
   const [boardLists, setBoardLists] = useState([])
